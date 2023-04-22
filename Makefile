@@ -5,7 +5,7 @@ OUTDIR=out
 
 SOURCEDIR=src
 
-sources = $(wildcard $(SOURCEDIR)/**/StatusCode.java $(SOURCEDIR)/**/models/AttributeType.java $(SOURCEDIR)/**/models/IndexType.java $(SOURCEDIR)/**/models/*.java $(SOURCEDIR)/**/fdb/FDBKVPair.java $(SOURCEDIR)/**/fdb/FDBHelper.java $(SOURCEDIR)/**/TableManager.java $(SOURCEDIR)/**/DBConf.java $(SOURCEDIR)/**/TableMetadataTransformer.java $(SOURCEDIR)/**/TableManagerImpl.java $(SOURCEDIR)/**/utils/*.java $(SOURCEDIR)/**/RecordsTransformer.java $(SOURCEDIR)/**/IndexTransformer.java $(SOURCEDIR)/**/Cursor.java $(SOURCEDIR)/**/Records.java $(SOURCEDIR)/**/RecordsImpl.java $(SOURCEDIR)/**/test/*.java)
+sources = $(wildcard $(SOURCEDIR)/**/StatusCode.java $(SOURCEDIR)/**/models/AttributeType.java $(SOURCEDIR)/**/models/IndexType.java $(SOURCEDIR)/**/models/*.java $(SOURCEDIR)/**/fdb/FDBKVPair.java $(SOURCEDIR)/**/fdb/FDBHelper.java $(SOURCEDIR)/**/TableManager.java $(SOURCEDIR)/**/DBConf.java $(SOURCEDIR)/**/TableMetadataTransformer.java $(SOURCEDIR)/**/TableManagerImpl.java $(SOURCEDIR)/**/utils/*.java $(SOURCEDIR)/**/RecordsTransformer.java $(SOURCEDIR)/**/IndexTransformer.java $(SOURCEDIR)/**/Cursor.java $(SOURCEDIR)/**/Records.java $(SOURCEDIR)/**/RecordsImpl.java $(SOURCEDIR)/**/Indexes.java $(SOURCEDIR)/**/test/*.java)
 classes = $(sources:.java=.class)
 
 preparation: clean
