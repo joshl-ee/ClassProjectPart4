@@ -12,7 +12,6 @@ import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
 import com.apple.foundationdb.directory.DirectorySubspace;
 import com.apple.foundationdb.tuple.Tuple;
-import jdk.jshell.Snippet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
