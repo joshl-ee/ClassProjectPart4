@@ -12,6 +12,7 @@ import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
 import com.apple.foundationdb.directory.DirectorySubspace;
 import com.apple.foundationdb.tuple.Tuple;
+import jdk.jshell.Snippet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -306,5 +307,11 @@ public class RecordsImpl implements Records{
   @Override
   public StatusCode deleteDataRecord(String tableName, String[] attrNames, Object[] attrValues) {
     return null;
+  }
+
+  @Override
+  public StatusCode closeDatabase() {
+    FDBHelper.close(db);
+    return StatusCode.SUCCESS;
   }
 }

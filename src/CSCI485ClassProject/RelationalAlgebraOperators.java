@@ -106,5 +106,6 @@ public interface RelationalAlgebraOperators {
    */
   public StatusCode delete(String tableName, Iterator iterator);
 
+  public StatusCode closeDatabase();
 }
 

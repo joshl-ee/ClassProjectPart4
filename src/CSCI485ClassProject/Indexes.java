@@ -23,4 +23,6 @@ public interface Indexes {
    * @return StatusCode
    */
   StatusCode dropIndex(String tableName, String attrName);
+
+  StatusCode closeDatabase();
 }

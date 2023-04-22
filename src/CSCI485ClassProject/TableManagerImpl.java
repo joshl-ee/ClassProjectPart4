@@ -175,4 +175,10 @@ public class TableManagerImpl implements TableManager{
     FDBHelper.clear(db);
     return StatusCode.SUCCESS;
   }
+
+  @Override
+  public StatusCode closeDatabase() {
+    FDBHelper.close(db);
+    return StatusCode.SUCCESS;
+  }
 }

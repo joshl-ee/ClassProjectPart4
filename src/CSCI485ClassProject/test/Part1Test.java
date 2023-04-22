@@ -8,6 +8,7 @@ import CSCI485ClassProject.models.AttributeType;
 import CSCI485ClassProject.TableManager;
 import CSCI485ClassProject.TableManagerImpl;
 import CSCI485ClassProject.models.TableMetadata;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,6 +34,8 @@ public class Part1Test {
     tableManager = new TableManagerImpl();
   }
 
+  @After
+  public void close() { tableManager.closeDatabase();}
   /**
    * Points: 10
    */

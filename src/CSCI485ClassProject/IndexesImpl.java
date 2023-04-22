@@ -122,4 +122,11 @@ public class IndexesImpl implements Indexes{
 
     return StatusCode.SUCCESS;
   }
+
+  @Override
+  public StatusCode closeDatabase() {
+    FDBHelper.close(db);
+    return StatusCode.SUCCESS;
+  }
+
 }

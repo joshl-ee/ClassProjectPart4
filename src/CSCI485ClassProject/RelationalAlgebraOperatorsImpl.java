@@ -1,8 +1,10 @@
 package CSCI485ClassProject;
 
+import CSCI485ClassProject.fdb.FDBHelper;
 import CSCI485ClassProject.models.AssignmentExpression;
 import CSCI485ClassProject.models.ComparisonPredicate;
 import CSCI485ClassProject.models.Record;
+import com.apple.foundationdb.Database;
 
 import java.util.List;
 import java.util.Set;
@@ -10,6 +12,7 @@ import java.util.Set;
 // your codes
 public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperators {
 
+  Database db;
   @Override
   public Iterator select(String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
     return null;
@@ -58,5 +61,11 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
   @Override
   public StatusCode delete(String tableName, Iterator iterator) {
     return null;
+  }
+
+  @Override
+  public StatusCode closeDatabase() {
+    FDBHelper.close(db);
+    return StatusCode.SUCCESS;
   }
 }

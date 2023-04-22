@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import CSCI485ClassProject.models.AttributeType;
 import CSCI485ClassProject.models.TableMetadata;
+import com.apple.foundationdb.Database;
 
 /**
  * TableManager defines the interfaces that need to be implemented to support the table
@@ -83,4 +84,6 @@ public interface TableManager {
    * @return status code
    */
   public StatusCode dropAllTables();
+
+  public StatusCode closeDatabase();
 }

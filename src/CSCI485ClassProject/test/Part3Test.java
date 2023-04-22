@@ -13,6 +13,7 @@ import CSCI485ClassProject.models.ComparisonOperator;
 import CSCI485ClassProject.models.IndexType;
 import CSCI485ClassProject.models.Record;
 import CSCI485ClassProject.models.TableMetadata;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -105,6 +106,12 @@ public class Part3Test {
     indexes = new IndexesImpl(records);
   }
 
+  @After
+  public void close() {
+    tableManager.closeDatabase();
+    records.closeDatabase();
+    indexes.closeDatabase();
+  }
   @Test
   public void unitTest1() {
     tableManager.dropAllTables();

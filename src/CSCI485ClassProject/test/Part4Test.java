@@ -17,6 +17,7 @@ import CSCI485ClassProject.models.ComparisonOperator;
 import CSCI485ClassProject.models.ComparisonPredicate;
 import CSCI485ClassProject.models.Record;
 import CSCI485ClassProject.models.TableMetadata;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -124,6 +125,13 @@ public class Part4Test {
     relAlgOperators = new RelationalAlgebraOperatorsImpl();
   }
 
+  @After
+  public void close(){
+    tableManager.closeDatabase();
+    records.closeDatabase();
+    indexes.closeDatabase();
+    relAlgOperators.closeDatabase();
+  }
   private Record getExpectedDepartmentRecord(long dno) {
     Record rec = new Record();
     String name = getDepartmentName(dno);

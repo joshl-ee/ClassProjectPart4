@@ -10,6 +10,7 @@ import CSCI485ClassProject.models.AttributeType;
 import CSCI485ClassProject.models.ComparisonOperator;
 import CSCI485ClassProject.models.Record;
 import CSCI485ClassProject.models.TableMetadata;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,6 +72,11 @@ public class Part2Test {
     records = new RecordsImpl();
   }
 
+  @After
+  public void close() {
+    tableManager.closeDatabase();
+    records.closeDatabase();
+  }
   /**
    * Points: 10
    */
