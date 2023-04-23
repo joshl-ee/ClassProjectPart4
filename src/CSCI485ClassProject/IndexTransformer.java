@@ -21,8 +21,6 @@ public class IndexTransformer {
     indexStore.add(indexType.name());
   }
 
-
-
   public List<String> getIndexStorePath() {
     return indexStore;
   }

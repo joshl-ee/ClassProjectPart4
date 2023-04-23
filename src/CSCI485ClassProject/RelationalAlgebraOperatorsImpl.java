@@ -1,10 +1,13 @@
 package CSCI485ClassProject;
 
 import CSCI485ClassProject.fdb.FDBHelper;
+import CSCI485ClassProject.fdb.FDBKVPair;
 import CSCI485ClassProject.models.AssignmentExpression;
 import CSCI485ClassProject.models.ComparisonPredicate;
 import CSCI485ClassProject.models.Record;
+import CSCI485ClassProject.models.TableMetadata;
 import com.apple.foundationdb.Database;
+import com.apple.foundationdb.Transaction;
 
 import java.util.List;
 import java.util.Set;
@@ -13,9 +16,39 @@ import java.util.Set;
 public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperators {
 
   Database db;
+
+  private TableMetadata getTableMetadataByTableName(Transaction tx, String tableName) {
+    TableMetadataTransformer tblMetadataTransformer = new TableMetadataTransformer(tableName);
+    List<FDBKVPair> kvPairs = FDBHelper.getAllKeyValuePairsOfSubdirectory(db, tx,
+            tblMetadataTransformer.getTableAttributeStorePath());
+    TableMetadata tblMetadata = tblMetadataTransformer.convertBackToTableMetadata(kvPairs);
+    return tblMetadata;
+  }
+
   @Override
   public Iterator select(String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
-    return null;
+    Transaction tx = FDBHelper.openTransaction(db);
+
+    // Check if predicate is valid
+    if (predicate.validate() != StatusCode.PREDICATE_OR_EXPRESSION_VALID) {
+      return null;
+    }
+
+    // Check if the table exists in table
+    TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
+    if (!metadata.doesAttributeExist(predicate.getLeftHandSideAttrName()) || !metadata.doesAttributeExist(predicate.getRightHandSideAttrName())) {
+      FDBHelper.abortTransaction(tx);
+      return null;
+    }
+
+    // Create iterator
+    SelectIterator iterator = new SelectIterator(db, tableName, metadata, predicate, mode);
+
+
+    // Check if EOF
+
+    FDBHelper.commitTransaction(tx);
+    return iterator;
   }
 
   @Override

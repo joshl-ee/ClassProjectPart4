@@ -33,17 +33,30 @@ public class ComparisonPredicate {
   public String getLeftHandSideAttrName() {
     return leftHandSideAttrName;
   }
-
+  public String getRightHandSideAttrName() {return rightHandSideAttrName; }
   public void setLeftHandSideAttrName(String leftHandSideAttrName) {
     this.leftHandSideAttrName = leftHandSideAttrName;
+  }
+  public void setRightHandSideAttrName(String rightHandSideAttrName) {
+    this.leftHandSideAttrName = rightHandSideAttrName;
   }
 
   public AttributeType getLeftHandSideAttrType() {
     return leftHandSideAttrType;
   }
+  public AttributeType getRightHandSideAttrType() {
+    return rightHandSideAttrType;
+  }
 
   public void setLeftHandSideAttrType(AttributeType leftHandSideAttrType) {
     this.leftHandSideAttrType = leftHandSideAttrType;
+  }
+  public void setLeftHandSideValue(Object rightHandSideValue) {
+    this.rightHandSideValue = rightHandSideValue;
+  }
+
+  public void setRightHandSideValue(Object rightHandSideValue) {
+    this.rightHandSideValue = rightHandSideValue;
   }
 
   public ComparisonOperator getOperator() {
@@ -58,9 +71,6 @@ public class ComparisonPredicate {
     return rightHandSideValue;
   }
 
-  public void setRightHandSideValue(Object rightHandSideValue) {
-    this.rightHandSideValue = rightHandSideValue;
-  }
 
   public ComparisonPredicate() {
     // None predicate by default

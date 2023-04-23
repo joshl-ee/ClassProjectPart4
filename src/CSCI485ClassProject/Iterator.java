@@ -4,6 +4,12 @@ import CSCI485ClassProject.models.Record;
 
 public abstract class Iterator {
 
+  // For subclasses:
+  // 1. Create index on attr being selected with predicate
+  // 2. Instantiate/return cursor using enablePredicate on created index using
+
+  // Cursor cursor;
+
   public enum Mode {
     READ,
     READ_WRITE
