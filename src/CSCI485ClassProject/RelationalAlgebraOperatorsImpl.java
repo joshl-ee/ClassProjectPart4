@@ -12,6 +12,7 @@ import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,7 +69,13 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   @Override
   public Set<Record> simpleSelect(String tableName, ComparisonPredicate predicate, boolean isUsingIndex) {
-    return null;
+    Set<Record> recordSet = new HashSet<>();
+    Iterator iterator = this.select(tableName, predicate, Iterator.Mode.READ, isUsingIndex);
+
+
+
+    iterator.commit();
+    return recordSet;
   }
 
   @Override

@@ -12,14 +12,15 @@ import com.apple.foundationdb.Transaction;
 
 public class SelectIterator extends Iterator {
 
-    String tableName;
-    ComparisonPredicate predicate;
-    Iterator.Mode mode;
-    boolean isUsingIndex;
-    Indexes indexer;
-    Records recorder;
-    Cursor cursor;
-    Transaction tx;
+    private String tableName;
+    private ComparisonPredicate predicate;
+    private Iterator.Mode mode;
+    private boolean isUsingIndex;
+    private Indexes indexer;
+    private Records recorder;
+    private Cursor cursor;
+    private Transaction tx;
+
     public SelectIterator(Database db, String tableName, TableMetadata metadata, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
@@ -56,6 +57,12 @@ public class SelectIterator extends Iterator {
         if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
         indexer.closeDatabase();
         recorder.closeDatabase();
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (!cursor.isInitialized()) return false;
+        return cursor.hasNext();
     }
 
     @Override
