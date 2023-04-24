@@ -24,12 +24,13 @@ public class SelectIterator extends Iterator {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
         this.predicate = predicate;
+        this.isUsingIndex = isUsingIndex;
         //this.mode = mode;
         recorder = new RecordsImpl();
         indexer = new IndexesImpl(recorder);
 
         // Create index
-        indexer.createIndex(tableName, predicate.getLeftHandSideAttrName(), IndexType.NON_CLUSTERED_B_PLUS_TREE_INDEX);
+        if (isUsingIndex) indexer.createIndex(tableName, predicate.getLeftHandSideAttrName(), IndexType.NON_CLUSTERED_B_PLUS_TREE_INDEX);
 
         // Initialize cursor based on predicate
         Cursor.Mode cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
@@ -52,7 +53,7 @@ public class SelectIterator extends Iterator {
         FDBHelper.commitTransaction(tx);
 
         // Drop index
-        indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
+        if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
         indexer.closeDatabase();
         recorder.closeDatabase();
     }
@@ -63,7 +64,7 @@ public class SelectIterator extends Iterator {
         FDBHelper.abortTransaction(tx);
 
         // Drop index
-        indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
+        if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
         indexer.closeDatabase();
         recorder.closeDatabase();
     }
