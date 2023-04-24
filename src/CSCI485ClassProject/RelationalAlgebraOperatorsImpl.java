@@ -73,6 +73,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     Iterator iterator = this.select(tableName, predicate, Iterator.Mode.READ, isUsingIndex);
 
     while (iterator.hasNext()) {
+      System.out.println("here");
       recordSet.add(iterator.next());
     }
 
