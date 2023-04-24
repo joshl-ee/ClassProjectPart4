@@ -72,7 +72,9 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     Set<Record> recordSet = new HashSet<>();
     Iterator iterator = this.select(tableName, predicate, Iterator.Mode.READ, isUsingIndex);
 
-
+    while (iterator.hasNext()) {
+      recordSet.add(iterator.next());
+    }
 
     iterator.commit();
     return recordSet;
