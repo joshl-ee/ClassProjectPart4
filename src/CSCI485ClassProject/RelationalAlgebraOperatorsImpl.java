@@ -37,6 +37,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
     // Check if predicate is valid
     if (predicate.validate() != StatusCode.PREDICATE_OR_EXPRESSION_VALID) {
+      System.out.println("Predicate invalid");
       return null;
     }
 
@@ -44,12 +45,12 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
     if (!metadata.doesAttributeExist(predicate.getLeftHandSideAttrName()) || !metadata.doesAttributeExist(predicate.getRightHandSideAttrName())) {
       FDBHelper.abortTransaction(tx);
+      System.out.println("Table does not exist");
       return null;
     }
 
     // Create iterator
     SelectIterator iterator = new SelectIterator(db, tableName, metadata, predicate, mode);
-
 
     // Check if EOF
 
