@@ -137,4 +137,6 @@ public interface Records {
   StatusCode deleteDataRecord(String tableName, String[] attrNames, Object[] attrValues);
 
   StatusCode closeDatabase();
+
+  boolean isInitialized(Cursor cursor);
 }

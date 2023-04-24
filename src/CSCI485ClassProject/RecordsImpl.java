@@ -154,6 +154,10 @@ public class RecordsImpl implements Records{
   }
 
   @Override
+  public boolean isInitialized(Cursor cursor) {
+    return cursor.isInitialized();
+  }
+  @Override
   public Cursor openCursor(String tableName, Cursor.Mode mode) {
     Transaction tx = FDBHelper.openTransaction(db);
 
