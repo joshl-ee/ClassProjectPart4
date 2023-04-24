@@ -33,6 +33,9 @@ public class SelectIterator extends Iterator {
 
         // Initialize cursor based on predicate
         Cursor.Mode cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
+        System.out.println("LeftHandSideAttrName: " + predicate.getLeftHandSideAttrName());
+        System.out.println("RightHandSideValue: " + predicate.getRightHandSideValue());
+        System.out.println("Operator: " + predicate.getOperator());
         cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, true);
     }
 
