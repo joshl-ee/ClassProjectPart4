@@ -1,15 +1,16 @@
-package CSCI485ClassProject;
+package CSCI485ClassProject.iterators;
 
+import CSCI485ClassProject.*;
 import CSCI485ClassProject.fdb.FDBHelper;
+import CSCI485ClassProject.iterators.Iterator;
 import CSCI485ClassProject.models.ComparisonPredicate;
 import CSCI485ClassProject.models.IndexType;
 import CSCI485ClassProject.models.Record;
 import CSCI485ClassProject.models.TableMetadata;
 import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
-import jdk.incubator.vector.VectorOperators;
 
-public class SelectIterator extends Iterator{
+public class SelectIterator extends Iterator {
 
     String tableName;
     ComparisonPredicate predicate;

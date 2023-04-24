@@ -2,7 +2,7 @@ package CSCI485ClassProject.test;
 
 import CSCI485ClassProject.Indexes;
 import CSCI485ClassProject.IndexesImpl;
-import CSCI485ClassProject.Iterator;
+import CSCI485ClassProject.iterators.Iterator;
 import CSCI485ClassProject.Records;
 import CSCI485ClassProject.RecordsImpl;
 import CSCI485ClassProject.RelationalAlgebraOperators;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 

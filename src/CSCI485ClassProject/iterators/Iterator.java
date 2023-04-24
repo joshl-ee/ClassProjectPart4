@@ -1,4 +1,4 @@
-package CSCI485ClassProject;
+package CSCI485ClassProject.iterators;
 
 import CSCI485ClassProject.models.Record;
 
