@@ -32,11 +32,8 @@ public class SelectIterator extends Iterator {
         indexer.createIndex(tableName, predicate.getLeftHandSideAttrName(), IndexType.NON_CLUSTERED_B_PLUS_TREE_INDEX);
 
         // Initialize cursor based on predicate
-        Record.Value value = new Record.Value();
-        value.setValue(predicate.getRightHandSideValue());
-        System.out.println("The value being read is: " + value);
         Cursor.Mode cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
-        cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), value, predicate.getOperator(), cursorMode, true);
+        cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, true);
     }
 
     @Override
