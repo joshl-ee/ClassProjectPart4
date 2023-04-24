@@ -217,6 +217,7 @@ public class Part4Test {
     randGenerator = new Random(randSeed);
     for (int i = 0; i <= 25; i++) {
       long ssn = i;
+      System.out.println("i: " + i);
       long dno = getDno(randGenerator, dnoLB, dnoUB);
       Record expectRecord = getExpectedEmployeeRecord(ssn, dno);
       Record actualRecord = selectRes.next();
