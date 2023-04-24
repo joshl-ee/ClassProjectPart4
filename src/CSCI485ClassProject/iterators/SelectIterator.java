@@ -20,7 +20,7 @@ public class SelectIterator extends Iterator {
     Records recorder;
     Cursor cursor;
     Transaction tx;
-    public SelectIterator(Database db, String tableName, TableMetadata metadata, ComparisonPredicate predicate, Iterator.Mode mode) {
+    public SelectIterator(Database db, String tableName, TableMetadata metadata, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
         this.predicate = predicate;
@@ -36,7 +36,7 @@ public class SelectIterator extends Iterator {
         System.out.println("LeftHandSideAttrName: " + predicate.getLeftHandSideAttrName());
         System.out.println("RightHandSideValue: " + predicate.getRightHandSideValue());
         System.out.println("Operator: " + predicate.getOperator());
-        cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, true);
+        cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
     }
 
     @Override

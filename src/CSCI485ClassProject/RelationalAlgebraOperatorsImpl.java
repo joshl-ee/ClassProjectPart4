@@ -58,7 +58,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     }
 
     // Create iterator
-    SelectIterator iterator = new SelectIterator(db, tableName, metadata, predicate, mode);
+    SelectIterator iterator = new SelectIterator(db, tableName, metadata, predicate, mode, isUsingIndex);
 
     // Check if EOF
 
