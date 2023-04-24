@@ -428,6 +428,7 @@ public class Cursor {
     Record record = moveToNextRecord(false);
     if (isPredicateEnabled) {
       while (record != null && !doesRecordMatchPredicate(record)) {
+        System.out.println("Comparing with: " + record.getValueForGivenAttrName("Salary"));
         record = moveToNextRecord(false);
       }
     }
