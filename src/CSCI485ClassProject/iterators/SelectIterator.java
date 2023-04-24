@@ -39,7 +39,7 @@ public class SelectIterator extends Iterator {
     @Override
     public Record next() {
         // Check if cursor is initialized
-        if (recorder.isInitialized(cursor)) return recorder.getFirst(cursor);
+        if (!recorder.isInitialized(cursor)) return recorder.getFirst(cursor);
         return recorder.getNext(cursor);
     }
 
