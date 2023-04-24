@@ -11,6 +11,7 @@ import CSCI485ClassProject.models.TableMetadata;
 import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -41,11 +42,18 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       return null;
     }
 
-    // Check if the table exists in table
-    TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
-    if (!metadata.doesAttributeExist(predicate.getLeftHandSideAttrName()) || !metadata.doesAttributeExist(predicate.getRightHandSideAttrName())) {
+    // Check if table exists
+    if (!FDBHelper.doesSubdirectoryExists(tx, Collections.singletonList(tableName))) {
       FDBHelper.abortTransaction(tx);
       System.out.println("Table does not exist");
+      return null;
+    }
+
+    // Check if the attr exists in table
+    TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
+    if (!metadata.doesAttributeExist(predicate.getLeftHandSideAttrName()) || (predicate.getRightHandSideAttrName() != null && !metadata.doesAttributeExist(predicate.getRightHandSideAttrName()))) {
+      FDBHelper.abortTransaction(tx);
+      System.out.println("Attribute does not exist on table");
       return null;
     }
 
