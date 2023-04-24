@@ -222,6 +222,7 @@ public class Part4Test {
       Record expectRecord = getExpectedEmployeeRecord(ssn, dno);
       Record actualRecord = selectRes.next();
 
+      System.out.println("Value of select iterator: " + actualRecord.getValueForGivenAttrName(Salary));
       assertEquals(expectRecord, actualRecord);
     }
     assertNull(selectRes.next());
