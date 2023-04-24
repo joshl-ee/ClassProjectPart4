@@ -61,7 +61,6 @@ public class SelectIterator extends Iterator {
 
     @Override
     public boolean hasNext() {
-        if (!cursor.isInitialized()) return false;
         return cursor.hasNext();
     }
 
