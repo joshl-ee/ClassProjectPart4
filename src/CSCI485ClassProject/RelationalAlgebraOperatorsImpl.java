@@ -19,6 +19,10 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   Database db;
 
+  public RelationalAlgebraOperatorsImpl() {
+    db = FDBHelper.initialization();
+  }
+
   private TableMetadata getTableMetadataByTableName(Transaction tx, String tableName) {
     TableMetadataTransformer tblMetadataTransformer = new TableMetadataTransformer(tableName);
     List<FDBKVPair> kvPairs = FDBHelper.getAllKeyValuePairsOfSubdirectory(db, tx,
