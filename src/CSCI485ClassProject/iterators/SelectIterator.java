@@ -50,9 +50,9 @@ public class SelectIterator extends Iterator {
     @Override
     public Record next() {
         // Check if cursor is initialized
-        Record record = recorder.getNext(cursor);
-
+        Record record;
         if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
+        record = recorder.getNext(cursor);
         while (predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) record = recorder.getNext(cursor);
         return record;
     }
