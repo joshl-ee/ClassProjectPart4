@@ -59,10 +59,10 @@ public class ProjectIterator extends Iterator{
 
     // TODO: If isDuplicateFree, create duplicate store
     private StatusCode initializeDuplicateStore(String attrName) {
-        if (!isUsingIterator) duplicatePath.add(getTableName());
+        if (!isUsingIterator) duplicatePath.add(this.getTableName());
         else duplicatePath.add(iterator.getTableName());
         duplicatePath.add("Duplicates");
-        duplicatePath.add("attrName");
+        duplicatePath.add(attrName);
         subspace = FDBHelper.createOrOpenSubspace(tx, duplicatePath);
         return StatusCode.SUCCESS;
     }
