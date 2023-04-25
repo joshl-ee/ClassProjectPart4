@@ -32,10 +32,11 @@ public class ProjectIterator extends Iterator{
         this.attrName = attrName;
         this.isDuplicateFree = isDuplicateFree;
         this.db = db;
+        isUsingIterator = false;
+
         if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
-        isUsingIterator = false;
         recorder = new RecordsImpl();
 
         cursor = recorder.openCursor(tableName, Cursor.Mode.READ);
@@ -45,19 +46,21 @@ public class ProjectIterator extends Iterator{
         this.attrName = attrName;
         this.isDuplicateFree = isDuplicateFree;
         this.db = db;
+        isUsingIterator = true;
+
         if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
 
 
-        isUsingIterator = true;
 
         this.iterator = iterator;
     }
 
     // TODO: If isDuplicateFree, create duplicate store
     private StatusCode initializeDuplicateStore(String attrName) {
-        duplicatePath.add(getTableName());
+        if (!isUsingIterator) duplicatePath.add(getTableName());
+        else duplicatePath.add(iterator.getTableName());
         duplicatePath.add("Duplicates");
         duplicatePath.add("attrName");
         subspace = FDBHelper.createOrOpenSubspace(tx, duplicatePath);
