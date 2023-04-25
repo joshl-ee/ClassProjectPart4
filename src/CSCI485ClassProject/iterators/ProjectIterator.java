@@ -139,7 +139,7 @@ public class ProjectIterator extends Iterator{
             FDBHelper.commitTransaction(searchTx);
             return true;
         }
-        FDBHelper.commitTransaction(searchTx)
+        FDBHelper.commitTransaction(searchTx);
         return false;
     }
 
