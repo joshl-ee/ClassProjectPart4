@@ -53,7 +53,10 @@ public class SelectIterator extends Iterator {
         Record record;
         if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
         else record = recorder.getNext(cursor);
-        while (record != null && predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) record = recorder.getNext(cursor);
+        while (record != null && predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) {
+            System.out.println("Skip!");
+            record = recorder.getNext(cursor);
+        }
         return record;
     }
 
