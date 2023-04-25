@@ -79,7 +79,7 @@ public class ProjectIterator extends Iterator{
     @Override
     public Record next() {
         Record record;
-        if (!isUsingIterator && cursor != null) {
+        if (!isUsingIterator) {
             if (!recorder.isInitialized(cursor)) record = project(recorder.getFirst(cursor));
             else record = project(recorder.getNext(cursor));
         }
