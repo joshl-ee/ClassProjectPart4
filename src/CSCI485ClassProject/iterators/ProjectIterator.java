@@ -91,6 +91,7 @@ public class ProjectIterator extends Iterator{
         if (isDuplicateFree) {
             if (!isUsingIterator) {
                 while (cursor != null && isRecordDuplicated(record)) {
+
                     record = project(recorder.getNext(cursor));
                 }
             }
@@ -121,6 +122,7 @@ public class ProjectIterator extends Iterator{
 
 
     private Record project(Record record) {
+        if (record == null) return null;
         Record projectedRecord = new Record();
 
         for (String attrName : record.getMapAttrNameToValue().keySet()) {
