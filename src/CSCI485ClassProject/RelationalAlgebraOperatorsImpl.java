@@ -74,9 +74,12 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     Iterator iterator = this.select(tableName, predicate, Iterator.Mode.READ, isUsingIndex);
 
     while (iterator != null && iterator.hasNext()) {
-      System.out.println("here");
       Record record = iterator.next();
-      if (record != null) recordSet.add(iterator.next());
+      if (record != null) {
+        System.out.println("Record's salary: " + record.getValueForGivenAttrName("Salary"));
+        System.out.println("Records age*2: " + (int) record.getValueForGivenAttrName("Age")*2);
+        recordSet.add(iterator.next());
+      }
     }
 
     if (iterator != null) iterator.commit();
