@@ -101,6 +101,8 @@ public class ProjectIterator extends Iterator{
                     record = project(iterator.next());
                 }
             }
+            if (record == null) return null;
+
             // Add valid record to duplicate store
             if (addToDuplicateStore(record) != StatusCode.SUCCESS) {
                 System.out.println("Error adding to duplicate store");
