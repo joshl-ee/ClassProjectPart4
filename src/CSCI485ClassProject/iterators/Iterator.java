@@ -10,7 +10,7 @@ public abstract class Iterator {
 
   // Cursor cursor;
 
-  private String tableName;
+  protected String tableName;
   public enum Mode {
     READ,
     READ_WRITE
@@ -30,6 +30,6 @@ public abstract class Iterator {
   public abstract boolean hasNext();
 
   public abstract void commit();
-  public String getTableName() {return tableName;}
+  public String getTableName() {return this.tableName;}
   public abstract void abort();
 }

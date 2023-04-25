@@ -15,7 +15,6 @@ import java.util.List;
 
 public class ProjectIterator extends Iterator{
 
-    private String tableName;
     private String attrName;
     private Records recorder;
     private Cursor cursor = null;
@@ -59,7 +58,7 @@ public class ProjectIterator extends Iterator{
 
     // TODO: If isDuplicateFree, create duplicate store
     private StatusCode initializeDuplicateStore(String attrName) {
-        if (!isUsingIterator) duplicatePath.add(this.getTableName());
+        if (!isUsingIterator) duplicatePath.add(getTableName());
         else duplicatePath.add(iterator.getTableName());
         duplicatePath.add("Duplicates");
         duplicatePath.add(attrName);
