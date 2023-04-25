@@ -12,10 +12,7 @@ import CSCI485ClassProject.models.TableMetadata;
 import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 // your codes
 public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperators {
@@ -122,13 +119,38 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   @Override
   public List<Record> simpleProject(String tableName, String attrName, boolean isDuplicateFree) {
+    List<Record> recordSet = new ArrayList<>();
+    Iterator iterator = this.project(tableName, attrName, isDuplicateFree);
 
-    return null;
+    while (iterator != null && iterator.hasNext()) {
+      Record record = iterator.next();
+      if (record != null) {
+//        System.out.println("Record's salary: " + record.getValueForGivenAttrName("Salary"));
+//        System.out.println("Records age*2: " + (long) record.getValueForGivenAttrName("Age")*2);
+        recordSet.add(record);
+      }
+    }
+
+    if (iterator != null) iterator.commit();
+    return recordSet;
   }
 
   @Override
   public List<Record> simpleProject(Iterator iterator, String attrName, boolean isDuplicateFree) {
-    return null;
+    List<Record> recordSet = new ArrayList<>();
+    Iterator p_iterator = this.project(iterator, attrName, isDuplicateFree);
+
+    while (p_iterator != null && p_iterator.hasNext()) {
+      Record record = p_iterator.next();
+      if (record != null) {
+//        System.out.println("Record's salary: " + record.getValueForGivenAttrName("Salary"));
+//        System.out.println("Records age*2: " + (long) record.getValueForGivenAttrName("Age")*2);
+        recordSet.add(record);
+      }
+    }
+
+    if (p_iterator != null) p_iterator.commit();
+    return recordSet;
   }
 
   @Override
