@@ -104,7 +104,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       return null;
     }
 
-    ProjectIterator iterator = new ProjectIterator(tableName, attrName, isDuplicateFree);
+    ProjectIterator iterator = new ProjectIterator(db, tableName, attrName, isDuplicateFree);
 
     FDBHelper.commitTransaction(tx);
     return iterator;
@@ -114,7 +114,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
   public Iterator project(Iterator iterator, String attrName, boolean isDuplicateFree) {
     Transaction tx = FDBHelper.openTransaction(db);
 
-    ProjectIterator p_iterator = new ProjectIterator(iterator, attrName, isDuplicateFree);
+    ProjectIterator p_iterator = new ProjectIterator(db, iterator, attrName, isDuplicateFree);
 
     FDBHelper.commitTransaction(tx);
     return p_iterator;
@@ -122,6 +122,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   @Override
   public List<Record> simpleProject(String tableName, String attrName, boolean isDuplicateFree) {
+
     return null;
   }
 
