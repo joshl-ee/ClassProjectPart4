@@ -37,7 +37,9 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
   public Iterator select(String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
     Transaction tx = FDBHelper.openTransaction(db);
 
+
     // Check if predicate is valid
+    if (predicate.getLeftHandSideAttrType() != predicate.getRightHandSideAttrType()) return null;
     if (predicate.validate() != StatusCode.PREDICATE_OR_EXPRESSION_VALID) {
       System.out.println("Predicate invalid");
       return null;
@@ -76,8 +78,8 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     while (iterator != null && iterator.hasNext()) {
       Record record = iterator.next();
       if (record != null) {
-        System.out.println("Record's salary: " + record.getValueForGivenAttrName("Salary"));
-        System.out.println("Records age*2: " + (long) record.getValueForGivenAttrName("Age")*2);
+//        System.out.println("Record's salary: " + record.getValueForGivenAttrName("Salary"));
+//        System.out.println("Records age*2: " + (long) record.getValueForGivenAttrName("Age")*2);
         recordSet.add(record);
       }
     }

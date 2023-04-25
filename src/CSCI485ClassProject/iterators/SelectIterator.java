@@ -35,18 +35,16 @@ public class SelectIterator extends Iterator {
 
         // Initialize cursor based on predicate
         Cursor.Mode cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
-        System.out.println("LeftHandSideAttrName: " + predicate.getLeftHandSideAttrName());
-        System.out.println("RightHandSideValue: " + predicate.getRightHandSideValue());
-        System.out.println("Operator: " + predicate.getOperator());
+//        System.out.println("LeftHandSideAttrName: " + predicate.getLeftHandSideAttrName());
+//        System.out.println("RightHandSideValue: " + predicate.getRightHandSideValue());
+//        System.out.println("Operator: " + predicate.getOperator());
 
         if (predicate.getPredicateType() == ComparisonPredicate.Type.ONE_ATTR) {
             cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
         }
         else {
             // TODO: Check if this will be a problem. Might be since we CANNOT use indicies when predicate type is TWO_ATTR
-            // TODO: Check if attributes are comparable AKA if types are the same
-            if (predicate.getLeftHandSideAttrType() != predicate.getRightHandSideAttrType()) cursor = null;
-            else cursor = recorder.openCursor(tableName, cursorMode);
+            cursor = recorder.openCursor(tableName, cursorMode);
         }
     }
 
@@ -58,7 +56,7 @@ public class SelectIterator extends Iterator {
         else record = recorder.getNext(cursor);
         while (record != null && predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) {
             skip++;
-            System.out.println("Skip!: " + skip);
+//            System.out.println("Skip!: " + skip);
             record = recorder.getNext(cursor);
         }
         return record;

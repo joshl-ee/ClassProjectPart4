@@ -211,7 +211,7 @@ public class Part4Test {
 
       assertEquals(StatusCode.SUCCESS, records.insertRecord(EmployeeTableName, EmployeeTablePKAttributes, primaryKeyVal, EmployeeTableNonPKAttributeNames, nonPrimaryKeyVal));
     }
-    System.out.println("Number of records that satisfy: " + numberOfJosh);
+    //System.out.println("Number of records that satisfy: " + numberOfJosh);
     ComparisonPredicate predicate = new ComparisonPredicate(Salary, AttributeType.INT, ComparisonOperator.LESS_THAN_OR_EQUAL_TO, 25);
     Iterator selectRes = relAlgOperators.select(EmployeeTableName, predicate, Iterator.Mode.READ, false);
 
