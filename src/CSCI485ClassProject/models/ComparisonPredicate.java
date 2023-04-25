@@ -70,7 +70,7 @@ public class ComparisonPredicate {
   public Object getRightHandSideValue() {
     return rightHandSideValue;
   }
-
+  public AlgebraicOperator getRightHandSideOperator() { return rightHandSideOperator; }
 
   public ComparisonPredicate() {
     // None predicate by default

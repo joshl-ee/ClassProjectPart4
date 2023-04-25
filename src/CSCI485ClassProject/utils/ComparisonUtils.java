@@ -1,5 +1,6 @@
 package CSCI485ClassProject.utils;
 
+import CSCI485ClassProject.models.AlgebraicOperator;
 import CSCI485ClassProject.models.ComparisonOperator;
 
 public class ComparisonUtils {
@@ -83,4 +84,39 @@ public class ComparisonUtils {
     }
   }
 
+  public static long calculateINT(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
+    long val1;
+    if (attrValue instanceof Integer) {
+      val1 = new Long((Integer) attrValue);
+    } else {
+      val1 = (long) attrValue;
+    }
+
+    long val2;
+    if (rhsValue instanceof Integer) {
+      val2 = new Long((Integer) rhsValue);
+    } else {
+      val2 = (long) rhsValue;
+    }
+
+    if (operator == AlgebraicOperator.PRODUCT) {
+      return val1 * val2;
+    }
+    else if (operator == AlgebraicOperator.DIVISION) {
+      return val1/val2;
+    }
+    else if (operator == AlgebraicOperator.MINUS) {
+      return val1-val2;
+    }
+    else if (operator == AlgebraicOperator.PLUS) {
+      return val1+val2;
+    }
+    return -1;
+  }
+
+  public static double calculateDOUBLE(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
+  }
+
+  public static String calculateVARCHAR(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
+  }
 }
