@@ -78,7 +78,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       if (record != null) {
         System.out.println("Record's salary: " + record.getValueForGivenAttrName("Salary"));
         System.out.println("Records age*2: " + (long) record.getValueForGivenAttrName("Age")*2);
-        recordSet.add(iterator.next());
+        recordSet.add(record);
       }
     }
 
