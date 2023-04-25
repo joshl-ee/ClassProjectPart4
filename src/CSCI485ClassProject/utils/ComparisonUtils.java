@@ -115,8 +115,10 @@ public class ComparisonUtils {
   }
 
   public static double calculateDOUBLE(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
+    return 0;
   }
 
   public static String calculateVARCHAR(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
+    return "emoty";
   }
 }
