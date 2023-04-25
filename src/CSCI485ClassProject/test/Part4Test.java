@@ -192,6 +192,7 @@ public class Part4Test {
 
     Random randGenerator = new Random(randSeed);
     Set<Record> expectSet = new HashSet<>();
+    int numberOfJosh = 0;
     for (int i = 0; i < initialNumberOfRecords; i++) {
       long ssn = i;
       long dno = getDno(randGenerator, dnoLB, dnoUB);
@@ -203,13 +204,14 @@ public class Part4Test {
 
       if (salary < age * 2) {
         expectSet.add(getExpectedEmployeeRecord(ssn, dno));
+        numberOfJosh++;
       }
       Object[] primaryKeyVal = new Object[] {ssn};
       Object[] nonPrimaryKeyVal = new Object[] {dno, name, email, age, address, salary};
 
       assertEquals(StatusCode.SUCCESS, records.insertRecord(EmployeeTableName, EmployeeTablePKAttributes, primaryKeyVal, EmployeeTableNonPKAttributeNames, nonPrimaryKeyVal));
     }
-
+    System.out.println("Number of records that satisfy: " + numberOfJosh);
     ComparisonPredicate predicate = new ComparisonPredicate(Salary, AttributeType.INT, ComparisonOperator.LESS_THAN_OR_EQUAL_TO, 25);
     Iterator selectRes = relAlgOperators.select(EmployeeTableName, predicate, Iterator.Mode.READ, false);
 
