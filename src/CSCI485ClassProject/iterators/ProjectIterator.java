@@ -41,8 +41,8 @@ public class ProjectIterator extends Iterator{
     public Record next() {
         Record record;
         if (!isUsingIterator && cursor != null) {
-            record = project(recorder.getNext(cursor));
-
+            if (isInitialized()) record = project(recorder.getFirst(cursor));
+            else record = project(recorder.getNext(cursor));
         }
         else {
             record = project(iterator.next());

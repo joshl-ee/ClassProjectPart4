@@ -26,7 +26,6 @@ public abstract class Iterator {
   };
 
   public abstract Record next();
-
   public abstract boolean hasNext();
 
   public abstract void commit();
