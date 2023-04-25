@@ -19,6 +19,8 @@ public class SelectIterator extends Iterator {
     private Cursor cursor;
     private Transaction tx;
 
+    //DEBUG:
+    private int skip = 0;
     public SelectIterator(Database db, String tableName, TableMetadata metadata, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
@@ -54,7 +56,8 @@ public class SelectIterator extends Iterator {
         if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
         else record = recorder.getNext(cursor);
         while (record != null && predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) {
-            System.out.println("Skip!");
+            skip++;
+            System.out.println("Skip!: " + skip);
             record = recorder.getNext(cursor);
         }
         return record;
