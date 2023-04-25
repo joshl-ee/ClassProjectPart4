@@ -87,6 +87,8 @@ public class ProjectIterator extends Iterator{
             record = project(iterator.next());
         }
 
+        if (record == null) return null;
+
         // Check if record is duplicate
         if (isDuplicateFree) {
             if (!isUsingIterator) {
