@@ -91,7 +91,6 @@ public class ProjectIterator extends Iterator{
         if (isDuplicateFree) {
             if (!isUsingIterator) {
                 while (cursor != null && isRecordDuplicated(record)) {
-
                     record = project(recorder.getNext(cursor));
                 }
             }
@@ -133,6 +132,7 @@ public class ProjectIterator extends Iterator{
     }
 
     private boolean isRecordDuplicated(Record record) {
+        if (record == null) return false;
         Transaction searchTx = FDBHelper.openTransaction(db);
         Object value = record.getValueForGivenAttrName(attrName);
         if (FDBHelper.getCertainKeyValuePairInSubdirectory(subspace, searchTx, new Tuple().addObject(value), duplicatePath) != null) {
