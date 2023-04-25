@@ -63,6 +63,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
     // Check if EOF
 
+
     FDBHelper.commitTransaction(tx);
     return iterator;
   }
@@ -71,13 +72,14 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
   public Set<Record> simpleSelect(String tableName, ComparisonPredicate predicate, boolean isUsingIndex) {
     Set<Record> recordSet = new HashSet<>();
     Iterator iterator = this.select(tableName, predicate, Iterator.Mode.READ, isUsingIndex);
-    System.out.println("Iterator is null: " + (iterator == null));
-    while (iterator.hasNext()) {
+
+    while (iterator != null && iterator.hasNext()) {
       System.out.println("here");
-      recordSet.add(iterator.next());
+      Record record = iterator.next();
+      if (record != null) recordSet.add(iterator.next());
     }
 
-    iterator.commit();
+    if (iterator != null) iterator.commit();
     return recordSet;
   }
 
