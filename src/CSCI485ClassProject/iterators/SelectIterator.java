@@ -52,7 +52,7 @@ public class SelectIterator extends Iterator {
         // Check if cursor is initialized
         Record record;
         if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
-        record = recorder.getNext(cursor);
+        else record = recorder.getNext(cursor);
         while (predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) record = recorder.getNext(cursor);
         return record;
     }
