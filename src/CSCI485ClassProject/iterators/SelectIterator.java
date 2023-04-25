@@ -19,9 +19,7 @@ public class SelectIterator extends Iterator {
     private Cursor cursor;
     private Transaction tx;
 
-    //DEBUG:
-    private int skip = 0;
-    public SelectIterator(Database db, String tableName, TableMetadata metadata, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
+    public SelectIterator(Database db, String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
         this.predicate = predicate;
@@ -43,7 +41,6 @@ public class SelectIterator extends Iterator {
             cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
         }
         else {
-            // TODO: Check if this will be a problem. Might be since we CANNOT use indicies when predicate type is TWO_ATTR
             cursor = recorder.openCursor(tableName, cursorMode);
         }
     }
@@ -55,7 +52,6 @@ public class SelectIterator extends Iterator {
         if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
         else record = recorder.getNext(cursor);
         while (record != null && predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && !doesRecordMatchPredicate(record)) {
-            skip++;
 //            System.out.println("Skip!: " + skip);
             record = recorder.getNext(cursor);
         }

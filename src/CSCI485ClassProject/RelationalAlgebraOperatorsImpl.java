@@ -3,6 +3,7 @@ package CSCI485ClassProject;
 import CSCI485ClassProject.fdb.FDBHelper;
 import CSCI485ClassProject.fdb.FDBKVPair;
 import CSCI485ClassProject.iterators.Iterator;
+import CSCI485ClassProject.iterators.ProjectIterator;
 import CSCI485ClassProject.iterators.SelectIterator;
 import CSCI485ClassProject.models.AssignmentExpression;
 import CSCI485ClassProject.models.ComparisonPredicate;
@@ -37,7 +38,6 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
   public Iterator select(String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
     Transaction tx = FDBHelper.openTransaction(db);
 
-
     // Check if predicate is valid
     if (predicate.getPredicateType() == ComparisonPredicate.Type.TWO_ATTRS && predicate.getLeftHandSideAttrType() != predicate.getRightHandSideAttrType()) return null;
     if (predicate.validate() != StatusCode.PREDICATE_OR_EXPRESSION_VALID) {
@@ -61,10 +61,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     }
 
     // Create iterator
-    SelectIterator iterator = new SelectIterator(db, tableName, metadata, predicate, mode, isUsingIndex);
-
-    // Check if EOF
-
+    SelectIterator iterator = new SelectIterator(db, tableName, predicate, mode, isUsingIndex);
 
     FDBHelper.commitTransaction(tx);
     return iterator;
@@ -90,12 +87,37 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   @Override
   public Iterator project(String tableName, String attrName, boolean isDuplicateFree) {
-    return null;
+    Transaction tx = FDBHelper.openTransaction(db);
+
+    // Check if table exists
+    if (!FDBHelper.doesSubdirectoryExists(tx, Collections.singletonList(tableName))) {
+      FDBHelper.abortTransaction(tx);
+      System.out.println("Table does not exist");
+      return null;
+    }
+
+    // Check if the attr exists in table
+    TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
+    if (!metadata.doesAttributeExist(attrName)) {
+      FDBHelper.abortTransaction(tx);
+      System.out.println("Attribute does not exist on table");
+      return null;
+    }
+
+    ProjectIterator iterator = new ProjectIterator(tableName, attrName, isDuplicateFree);
+
+    FDBHelper.commitTransaction(tx);
+    return iterator;
   }
 
   @Override
   public Iterator project(Iterator iterator, String attrName, boolean isDuplicateFree) {
-    return null;
+    Transaction tx = FDBHelper.openTransaction(db);
+
+    ProjectIterator p_iterator = new ProjectIterator(iterator, attrName, isDuplicateFree);
+
+    FDBHelper.commitTransaction(tx);
+    return p_iterator;
   }
 
   @Override
