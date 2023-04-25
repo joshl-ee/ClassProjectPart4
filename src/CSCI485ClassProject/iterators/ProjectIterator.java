@@ -22,7 +22,7 @@ public class ProjectIterator extends Iterator{
     private boolean isUsingIterator;
     private boolean isDuplicateFree;
     private Iterator iterator = null;
-    private List<String> duplicatePath = null;
+    private List<String> duplicatePath = new ArrayList<>();
     private DirectorySubspace subspace = null;
     private Database db;
 
@@ -50,8 +50,6 @@ public class ProjectIterator extends Iterator{
         if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
-
-
 
         this.iterator = iterator;
     }
