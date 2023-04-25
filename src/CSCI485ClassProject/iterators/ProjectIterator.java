@@ -136,8 +136,10 @@ public class ProjectIterator extends Iterator{
         Transaction searchTx = FDBHelper.openTransaction(db);
         Object value = record.getValueForGivenAttrName(attrName);
         if (FDBHelper.getCertainKeyValuePairInSubdirectory(subspace, searchTx, new Tuple().addObject(value), duplicatePath) != null) {
+            FDBHelper.commitTransaction(searchTx);
             return true;
         }
+        FDBHelper.commitTransaction(searchTx)
         return false;
     }
 
