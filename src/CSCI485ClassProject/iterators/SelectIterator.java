@@ -45,7 +45,8 @@ public class SelectIterator extends Iterator {
         else {
             // TODO: Check if this will be a problem. Might be since we CANNOT use indicies when predicate type is TWO_ATTR
             // TODO: Check if attributes are comparable AKA if types are the same
-            cursor = recorder.openCursor(tableName, cursorMode);
+            if (predicate.getLeftHandSideAttrType() != predicate.getRightHandSideAttrType()) cursor = null;
+            else cursor = recorder.openCursor(tableName, cursorMode);
         }
     }
 
