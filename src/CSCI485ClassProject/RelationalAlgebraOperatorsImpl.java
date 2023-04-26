@@ -101,7 +101,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       return null;
     }
 
-    ProjectIterator iterator = new ProjectIterator(db, tableName, attrName, isDuplicateFree);
+    ProjectIterator iterator = new ProjectIterator(db, tableName, attrName, isDuplicateFree, false);
 
     FDBHelper.commitTransaction(tx);
     return iterator;
@@ -120,9 +120,30 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
   @Override
   public List<Record> simpleProject(String tableName, String attrName, boolean isDuplicateFree) {
     List<Record> recordSet = new ArrayList<>();
-    Iterator iterator = this.project(tableName, attrName, isDuplicateFree);
 
-    while (iterator != null && iterator.hasNext()) {
+    Transaction tx = FDBHelper.openTransaction(db);
+
+    // Check if table exists
+    if (!FDBHelper.doesSubdirectoryExists(tx, Collections.singletonList(tableName))) {
+      FDBHelper.abortTransaction(tx);
+      System.out.println("Table does not exist");
+      return null;
+    }
+
+    // Check if the attr exists in table
+    TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
+    if (!metadata.doesAttributeExist(attrName)) {
+      FDBHelper.abortTransaction(tx);
+      System.out.println("Attribute does not exist on table");
+      return null;
+    }
+
+    ProjectIterator iterator = new ProjectIterator(db, tableName, attrName, isDuplicateFree, true);
+
+    FDBHelper.commitTransaction(tx);
+
+
+    while (iterator.hasNext()) {
       Record record = iterator.next();
       if (record != null) {
         System.out.println("Record's DNO: " + record.getValueForGivenAttrName("DNO"));
@@ -131,8 +152,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     }
 
 
-    if (iterator != null) iterator.commit();
-    // TODO: Sort this somehow
+    iterator.commit();
     return recordSet;
   }
 

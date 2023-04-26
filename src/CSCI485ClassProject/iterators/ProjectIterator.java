@@ -27,7 +27,7 @@ public class ProjectIterator extends Iterator{
     private DirectorySubspace subspace = null;
     private Database db;
 
-    public ProjectIterator(Database db, String tableName, String attrName, boolean isDuplicateFree) {
+    public ProjectIterator(Database db, String tableName, String attrName, boolean isDuplicateFree, boolean simpleOrNo) {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
         this.attrName = attrName;
@@ -49,7 +49,10 @@ public class ProjectIterator extends Iterator{
         // Open cursor
         TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
         AttributeType attrType = metadata.getAttributes().get(attrName);
-        if (attrType == AttributeType.INT) {
+        if (!simpleOrNo) {
+            cursor = recorder.openCursor(tableName, Cursor.Mode.READ);
+        }
+        else if (attrType == AttributeType.INT) {
             cursor = recorder.openCursor(tableName, attrName, Integer.MIN_VALUE, ComparisonOperator.GREATER_THAN_OR_EQUAL_TO, Cursor.Mode.READ, true);
         }
         else if (attrType == AttributeType.VARCHAR) {
