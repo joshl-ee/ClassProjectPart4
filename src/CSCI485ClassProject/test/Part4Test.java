@@ -269,15 +269,17 @@ public class Part4Test {
       actualDnoList.add((Long) record.getValueForGivenAttrName(DNO));
     }
 
+    System.out.println("here");
     List<Long> expectDnoList = new ArrayList<>(expectDnoSet);
     java.util.Collections.sort(expectDnoList);
     assertEquals(expectDnoList, actualDnoList);
+
 
     ComparisonPredicate predicate = new ComparisonPredicate(SSN, AttributeType.INT, ComparisonOperator.LESS_THAN, 50);
     Iterator selectRes = relAlgOperators.select(EmployeeTableName, predicate, Iterator.Mode.READ_WRITE, false);
     assertNotNull(selectRes);
 
-
+    System.out.println("here1");
     Iterator emailRecordIterator = relAlgOperators.project(selectRes, Email, true);
     Set<String> expectedEmailSet = new HashSet<>();
     Set<String> actualEmailSet = new HashSet<>();
@@ -289,7 +291,7 @@ public class Part4Test {
       expectedEmailSet.add(getEmail(i));
       actualEmailSet.add((String) record.getValueForGivenAttrName(Email));
     }
-
+    System.out.println("here2");
     assertNull(emailRecordIterator.next());
     emailRecordIterator.commit();
 

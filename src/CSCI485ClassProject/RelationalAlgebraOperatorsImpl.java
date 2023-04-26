@@ -146,9 +146,10 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     while (iterator.hasNext()) {
       Record record = iterator.next();
       if (record != null) {
-        System.out.println("Record's DNO: " + record.getValueForGivenAttrName("DNO"));
+        //System.out.println("Record's DNO: " + record.getValueForGivenAttrName("DNO"));
         recordSet.add(record);
       }
+      else break;
     }
 
 
