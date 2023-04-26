@@ -314,6 +314,7 @@ public class Part4Test {
     }
 
     ComparisonPredicate nonePredicate = new ComparisonPredicate();
+
     Iterator employeeIterator = relAlgOperators.select(EmployeeTableName, nonePredicate, Iterator.Mode.READ, false);
     Iterator departmentIterator = relAlgOperators.select(DepartmentTableName, nonePredicate, Iterator.Mode.READ, false);
 

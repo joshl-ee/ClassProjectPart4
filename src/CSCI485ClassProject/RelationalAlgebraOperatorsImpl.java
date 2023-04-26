@@ -52,7 +52,8 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
     // Check if the attr exists in table
     TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
-    if (!metadata.doesAttributeExist(predicate.getLeftHandSideAttrName()) || (predicate.getRightHandSideAttrName() != null && !metadata.doesAttributeExist(predicate.getRightHandSideAttrName()))) {
+
+    if ((predicate.getLeftHandSideAttrName() != null && !metadata.doesAttributeExist(predicate.getLeftHandSideAttrName())) || (predicate.getRightHandSideAttrName() != null && !metadata.doesAttributeExist(predicate.getRightHandSideAttrName()))) {
       FDBHelper.abortTransaction(tx);
       System.out.println("Attribute does not exist on table");
       return null;
