@@ -3,7 +3,7 @@ package CSCI485ClassProject.iterators;
 import CSCI485ClassProject.*;
 import CSCI485ClassProject.fdb.FDBHelper;
 import CSCI485ClassProject.fdb.FDBKVPair;
-import CSCI485ClassProject.models.ComparisonPredicate;
+import CSCI485ClassProject.models.*;
 import CSCI485ClassProject.models.Record;
 import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
@@ -17,6 +17,7 @@ public class ProjectIterator extends Iterator{
 
     private String attrName;
     private Records recorder;
+    private Indexes indexer;
     private Cursor cursor = null;
     private Transaction tx;
     private boolean isUsingIterator;
@@ -37,9 +38,26 @@ public class ProjectIterator extends Iterator{
         if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
-        recorder = new RecordsImpl();
 
-        cursor = recorder.openCursor(tableName, Cursor.Mode.READ);
+        recorder = new RecordsImpl();
+        indexer = new IndexesImpl(recorder);
+
+        // Create index
+        indexer.createIndex(tableName, attrName, IndexType.NON_CLUSTERED_B_PLUS_TREE_INDEX);
+
+
+        // Open cursor
+        TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
+        AttributeType attrType = metadata.getAttributes().get(attrName);
+        if (attrType == AttributeType.INT) {
+            cursor = recorder.openCursor(tableName, attrName, Integer.MIN_VALUE, ComparisonOperator.GREATER_THAN_OR_EQUAL_TO, Cursor.Mode.READ, true);
+        }
+        else if (attrType == AttributeType.VARCHAR) {
+            cursor = recorder.openCursor(tableName, attrName, "", ComparisonOperator.GREATER_THAN_OR_EQUAL_TO, Cursor.Mode.READ, true);
+        }
+        else if (attrType == AttributeType.DOUBLE) {
+            cursor = recorder.openCursor(tableName, attrName, Double.MIN_VALUE, ComparisonOperator.GREATER_THAN_OR_EQUAL_TO, Cursor.Mode.READ, true);
+        }
     }
 
     public ProjectIterator(Database db, Iterator iterator, String attrName, boolean isDuplicateFree) {
@@ -56,7 +74,14 @@ public class ProjectIterator extends Iterator{
         this.iterator = iterator;
     }
 
-    // TODO: If isDuplicateFree, create duplicate store
+    private TableMetadata getTableMetadataByTableName(Transaction tx, String tableName) {
+        TableMetadataTransformer tblMetadataTransformer = new TableMetadataTransformer(tableName);
+        List<FDBKVPair> kvPairs = FDBHelper.getAllKeyValuePairsOfSubdirectory(db, tx,
+                tblMetadataTransformer.getTableAttributeStorePath());
+        TableMetadata tblMetadata = tblMetadataTransformer.convertBackToTableMetadata(kvPairs);
+        return tblMetadata;
+    }
+
     private StatusCode initializeDuplicateStore(String attrName) {
         if (!isUsingIterator) duplicatePath.add(getTableName());
         else duplicatePath.add(iterator.getTableName());
@@ -66,7 +91,6 @@ public class ProjectIterator extends Iterator{
         return StatusCode.SUCCESS;
     }
 
-    // TODO: Add record to duplicate store if duplicate
     private StatusCode addToDuplicateStore(Record record) {
         Transaction addTx = FDBHelper.openTransaction(db);
         Object value = record.getValueForGivenAttrName(attrName);

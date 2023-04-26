@@ -130,7 +130,9 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       }
     }
 
+
     if (iterator != null) iterator.commit();
+    // TODO: Sort this somehow
     return recordSet;
   }
 

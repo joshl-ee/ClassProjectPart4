@@ -19,6 +19,7 @@ import static CSCI485ClassProject.StatusCode.SUCCESS;
  */
 public class Record {
 
+
   /**
    * Value represents the valid value stored in the database. It encapsulates the type checking and value getter/setter.
    */
