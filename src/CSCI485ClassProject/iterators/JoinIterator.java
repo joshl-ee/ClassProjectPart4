@@ -73,15 +73,16 @@ public class JoinIterator extends Iterator{
         // Loop through outer iterator. For each iteration, loop through entire inner iterator. Need to create a copy constructor for this
         Record outerRecord;
         Record innerRecord;
-        int count = 0;
+        // Debug log:
+//        int count = 0;
         while (outerIterator.hasNext()) {
-            // TODO: Implement resetOperation for Iterator
             outerRecord = outerIterator.next();
+            // Reset inner operator during each iteration of outer table
             innerIterator.startFromBeginning();
             while (innerIterator.hasNext()) {
                 innerRecord = innerIterator.next();
-                count++;
-                System.out.println("Count: " + count);
+//                count++;
+//                System.out.println("Count: " + count);
                 // TODO: Join Logic. Add to join store if predicate succeeds
                 if (doesRecordMatchPredicate(outerRecord, innerRecord)) {
                     addToJoinStore(outerRecord, innerRecord);
@@ -95,7 +96,52 @@ public class JoinIterator extends Iterator{
 
     // TODO: Predicate checker
     public boolean doesRecordMatchPredicate(Record outerRecord, Record innerRecord) {
+        // Calculate value of outer record
+        Object outerValue = null;
+        if (predicate.getLeftHandSideAttrName() != null) {
+            outerValue = outerRecord.getValueForGivenAttrName(predicate.getLeftHandSideAttrName());
+        }
 
+        // Calculate value of inner record
+        Object innerValue = null;
+        if (predicate.getLeftHandSideAttrName() != null) {
+            innerValue = outerRecord.getValueForGivenAttrName(predicate.getRightHandSideAttrName());
+        }
+        // Get RHS operator if it exists
+        boolean rhsOperation = false;
+        AlgebraicOperator rhsOperator = null;
+        Object rhsValue = null;
+        if (predicate.getRightHandSideOperator() != null) {
+            rhsOperator = predicate.getRightHandSideOperator();
+            rhsOperation = true;
+            rhsValue = predicate.getRightHandSideValue();
+        }
+
+        // Check for same type
+        if (outerRecord.getTypeForGivenAttrName(predicate.getLeftHandSideAttrName()) != innerRecord.getTypeForGivenAttrName(predicate.getRightHandSideAttrName())) {
+            return false;
+        }
+
+        // Use type specific method to calculate the RHS value using added ComparisonUtil function
+        // Then, use compareTwo methods to return if predicate is matched
+        AttributeType recType = outerRecord.getTypeForGivenAttrName(predicate.getLeftHandSideAttrName());
+        Object finalValue;
+        if (recType == AttributeType.INT) {
+            if (rhsOperation) {
+                finalValue = ComparisonUtils.calculateINT(innerValue, rhsOperator, rhsValue);
+            }
+            else finalValue = innerValue;
+            return ComparisonUtils.compareTwoINT(outerValue, finalValue, predicate.getOperator());
+        } else if (recType == AttributeType.DOUBLE){
+            if (rhsOperation) {
+                finalValue = ComparisonUtils.calculateDOUBLE(innerValue, rhsOperator, rhsValue);
+            }
+            else finalValue = innerValue;
+            return ComparisonUtils.compareTwoDOUBLE(outerValue, finalValue, predicate.getOperator());
+        } else if (recType == AttributeType.VARCHAR) {
+            System.out.println("This is not possible");
+            return false;
+        }
         return false;
     }
 
