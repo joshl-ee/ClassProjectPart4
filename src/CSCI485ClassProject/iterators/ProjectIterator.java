@@ -86,11 +86,13 @@ public class ProjectIterator extends Iterator{
     }
 
     private StatusCode initializeDuplicateStore(String attrName) {
+        Transaction storeTx = FDBHelper.openTransaction(db);
         if (!isUsingIterator) duplicatePath.add(getTableName());
         else duplicatePath.add(iterator.getTableName());
         duplicatePath.add("Duplicates");
         duplicatePath.add(attrName);
-        subspace = FDBHelper.createOrOpenSubspace(tx, duplicatePath);
+        subspace = FDBHelper.createOrOpenSubspace(storeTx, duplicatePath);
+        FDBHelper.commitTransaction(storeTx);
         return StatusCode.SUCCESS;
     }
 
