@@ -152,7 +152,6 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       else break;
     }
 
-
     iterator.commit();
     return recordSet;
   }

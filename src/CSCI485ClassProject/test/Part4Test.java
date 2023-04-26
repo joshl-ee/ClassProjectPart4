@@ -269,7 +269,6 @@ public class Part4Test {
       actualDnoList.add((Long) record.getValueForGivenAttrName(DNO));
     }
 
-    System.out.println("here");
     List<Long> expectDnoList = new ArrayList<>(expectDnoSet);
     java.util.Collections.sort(expectDnoList);
     assertEquals(expectDnoList, actualDnoList);
@@ -279,7 +278,6 @@ public class Part4Test {
     Iterator selectRes = relAlgOperators.select(EmployeeTableName, predicate, Iterator.Mode.READ_WRITE, false);
     assertNotNull(selectRes);
 
-    System.out.println("here1");
     Iterator emailRecordIterator = relAlgOperators.project(selectRes, Email, true);
     Set<String> expectedEmailSet = new HashSet<>();
     Set<String> actualEmailSet = new HashSet<>();
@@ -291,7 +289,6 @@ public class Part4Test {
       expectedEmailSet.add(getEmail(i));
       actualEmailSet.add((String) record.getValueForGivenAttrName(Email));
     }
-    System.out.println("here2");
     assertNull(emailRecordIterator.next());
     emailRecordIterator.commit();
 
@@ -299,59 +296,59 @@ public class Part4Test {
     System.out.println("Test2 passed!");
   }
 
-//  @Test
-//  public void unitTest3 () {
-//    // create the Department Table
-//    assertEquals(StatusCode.SUCCESS, tableManager.createTable(DepartmentTableName,
-//        DepartmentTableAttributeNames, DepartmentTableAttributeTypes, DepartmentTablePKAttributes));
-//
-//    for (int i = 0; i < initialNumberOfRecords; i++) {
-//      long dno = i;
-//      long floor = getFloor(i);
-//      String name = getDepartmentName(i);
-//
-//      Object[] primaryKeyVal = new Object[] {dno};
-//      Object[] nonPrimaryKeyVal = new Object[] {name, floor};
-//
-//      assertEquals(StatusCode.SUCCESS, records.insertRecord(DepartmentTableName, DepartmentTablePKAttributes, primaryKeyVal, DepartmentTableNonPKAttributeNames, nonPrimaryKeyVal));
-//    }
-//
-//    ComparisonPredicate nonePredicate = new ComparisonPredicate();
-//    Iterator employeeIterator = relAlgOperators.select(EmployeeTableName, nonePredicate, Iterator.Mode.READ, false);
-//    Iterator departmentIterator = relAlgOperators.select(DepartmentTableName, nonePredicate, Iterator.Mode.READ, false);
-//
-//    ComparisonPredicate joinPredicate =
-//        new ComparisonPredicate(DNO, AttributeType.INT, ComparisonOperator.EQUAL_TO, DNO, AttributeType.INT, 1, AlgebraicOperator.PRODUCT);
-//    Iterator joinResIterator = relAlgOperators.join(employeeIterator, departmentIterator, joinPredicate, null);
-//
-//    // construct the expect record set
-//    Set<Record> expectedRecordSet = new HashSet<>();
-//    Random randomGenerator = new Random(randSeed);
-//    for (int i = 0; i < initialNumberOfRecords; i++) {
-//      long ssn = i;
-//      long dno = getDno(randomGenerator, dnoLB, dnoUB);
-//      Record employeeRecord = getExpectedEmployeeRecord(ssn, dno);
-//      Record departmentRecord = getExpectedDepartmentRecord(dno);
-//      Record joinedRecord = getExpectedJoinedEmpDepRecord(employeeRecord, departmentRecord);
-//
-//      expectedRecordSet.add(joinedRecord);
-//    }
-//
-//
-//    Set<Record> actualRecordSet = new HashSet<>();
-//    while (true) {
-//      Record record = joinResIterator.next();
-//      if (record == null) {
-//        break;
-//      }
-//      actualRecordSet.add(record);
-//    }
-//
-//    assertEquals(expectedRecordSet, actualRecordSet);
-//    joinResIterator.commit();
-//    System.out.println("Test3 passed!");
-//  }
-//
+  @Test
+  public void unitTest3 () {
+    // create the Department Table
+    assertEquals(StatusCode.SUCCESS, tableManager.createTable(DepartmentTableName,
+        DepartmentTableAttributeNames, DepartmentTableAttributeTypes, DepartmentTablePKAttributes));
+
+    for (int i = 0; i < initialNumberOfRecords; i++) {
+      long dno = i;
+      long floor = getFloor(i);
+      String name = getDepartmentName(i);
+
+      Object[] primaryKeyVal = new Object[] {dno};
+      Object[] nonPrimaryKeyVal = new Object[] {name, floor};
+
+      assertEquals(StatusCode.SUCCESS, records.insertRecord(DepartmentTableName, DepartmentTablePKAttributes, primaryKeyVal, DepartmentTableNonPKAttributeNames, nonPrimaryKeyVal));
+    }
+
+    ComparisonPredicate nonePredicate = new ComparisonPredicate();
+    Iterator employeeIterator = relAlgOperators.select(EmployeeTableName, nonePredicate, Iterator.Mode.READ, false);
+    Iterator departmentIterator = relAlgOperators.select(DepartmentTableName, nonePredicate, Iterator.Mode.READ, false);
+
+    ComparisonPredicate joinPredicate =
+        new ComparisonPredicate(DNO, AttributeType.INT, ComparisonOperator.EQUAL_TO, DNO, AttributeType.INT, 1, AlgebraicOperator.PRODUCT);
+    Iterator joinResIterator = relAlgOperators.join(employeeIterator, departmentIterator, joinPredicate, null);
+
+    // construct the expect record set
+    Set<Record> expectedRecordSet = new HashSet<>();
+    Random randomGenerator = new Random(randSeed);
+    for (int i = 0; i < initialNumberOfRecords; i++) {
+      long ssn = i;
+      long dno = getDno(randomGenerator, dnoLB, dnoUB);
+      Record employeeRecord = getExpectedEmployeeRecord(ssn, dno);
+      Record departmentRecord = getExpectedDepartmentRecord(dno);
+      Record joinedRecord = getExpectedJoinedEmpDepRecord(employeeRecord, departmentRecord);
+
+      expectedRecordSet.add(joinedRecord);
+    }
+
+
+    Set<Record> actualRecordSet = new HashSet<>();
+    while (true) {
+      Record record = joinResIterator.next();
+      if (record == null) {
+        break;
+      }
+      actualRecordSet.add(record);
+    }
+
+    assertEquals(expectedRecordSet, actualRecordSet);
+    joinResIterator.commit();
+    System.out.println("Test3 passed!");
+  }
+
 //  @Test
 //  public void unitTest4() {
 //    // insert new records in the department table

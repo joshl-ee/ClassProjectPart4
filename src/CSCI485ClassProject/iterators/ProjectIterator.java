@@ -35,7 +35,7 @@ public class ProjectIterator extends Iterator{
         this.db = db;
         isUsingIterator = false;
 
-        if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
+        if (isDuplicateFree && initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
 
@@ -71,7 +71,7 @@ public class ProjectIterator extends Iterator{
         isUsingIterator = true;
         this.iterator = iterator;
 
-        if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
+        if (isDuplicateFree && initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
 
@@ -177,18 +177,21 @@ public class ProjectIterator extends Iterator{
     @Override
     public void commit() {
         // Delete duplicate store structure
+        if (isDuplicateFree) {
+            FDBHelper.dropSubspace(tx, duplicatePath);
+        }
 
         // Commit tx
-
-        return;
+        FDBHelper.commitTransaction(tx);
     }
 
     @Override
     public void abort() {
         // Delete duplicate store structure
-
+        if (isDuplicateFree) {
+            FDBHelper.dropSubspace(tx, duplicatePath);
+        }
         // Abort tx
-
-        return;
+        FDBHelper.abortTransaction(tx);
     }
 }
