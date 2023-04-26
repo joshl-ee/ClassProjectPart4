@@ -71,6 +71,9 @@ public class ProjectIterator extends Iterator{
         isUsingIterator = true;
         this.iterator = iterator;
 
+        recorder = new RecordsImpl();
+        indexer = new IndexesImpl(recorder);
+
         if (isDuplicateFree && initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
@@ -182,7 +185,8 @@ public class ProjectIterator extends Iterator{
         if (isDuplicateFree) {
             FDBHelper.dropSubspace(tx, duplicatePath);
         }
-
+        indexer.closeDatabase();
+        recorder.closeDatabase();
         // Commit tx
         FDBHelper.commitTransaction(tx);
     }
@@ -193,6 +197,8 @@ public class ProjectIterator extends Iterator{
         if (isDuplicateFree) {
             FDBHelper.dropSubspace(tx, duplicatePath);
         }
+        indexer.closeDatabase();
+        recorder.closeDatabase();
         // Abort tx
         FDBHelper.abortTransaction(tx);
     }
