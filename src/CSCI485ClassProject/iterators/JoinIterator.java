@@ -16,6 +16,7 @@ import com.apple.foundationdb.Transaction;
 import com.apple.foundationdb.directory.DirectorySubspace;
 import com.apple.foundationdb.tuple.Tuple;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class JoinIterator extends Iterator{
     private ComparisonPredicate predicate;
     private Set<String> attrNames;
     private Database db;
-    private List<String> joinPath;
+    private List<String> joinPath = new ArrayList<>();
     private DirectorySubspace subspace;
     private String joinTableName;
 
