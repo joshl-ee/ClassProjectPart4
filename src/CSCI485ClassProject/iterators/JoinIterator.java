@@ -62,6 +62,7 @@ public class JoinIterator extends Iterator{
         Transaction storeTx = FDBHelper.openTransaction(db);
         joinTableName = outerIterator.getTableName()+innerIterator.getTableName()+"Join";
         joinPath.add(joinTableName);
+        joinPath.add("records");
         subspace = FDBHelper.createOrOpenSubspace(storeTx, joinPath);
         FDBHelper.commitTransaction(storeTx);
         return StatusCode.SUCCESS;
@@ -153,7 +154,7 @@ public class JoinIterator extends Iterator{
         Transaction addTx = FDBHelper.openTransaction(db);
 //        FDBKVPair kvpair = new FDBKVPair(joinPath, new Tuple().addObject(value), new Tuple());
 //        FDBHelper.setFDBKVPair(subspace, addTx, kvpair);
-//        FDBHelper.commitTransaction(addTx);
+        FDBHelper.commitTransaction(addTx);
         return StatusCode.SUCCESS;
     }
 
