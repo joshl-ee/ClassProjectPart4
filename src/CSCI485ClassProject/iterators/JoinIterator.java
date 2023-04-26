@@ -75,17 +75,18 @@ public class JoinIterator extends Iterator{
         Record outerRecord;
         Record innerRecord;
         // Debug log:
-//        int count = 0;
+        int count = 0;
         while (outerIterator.hasNext()) {
             outerRecord = outerIterator.next();
             // Reset inner operator during each iteration of outer table
             innerIterator.startFromBeginning();
             while (innerIterator.hasNext()) {
                 innerRecord = innerIterator.next();
-//                count++;
 //                System.out.println("Count: " + count);
                 // TODO: Join Logic. Add to join store if predicate succeeds
                 if (doesRecordMatchPredicate(outerRecord, innerRecord)) {
+                    count++;
+                    System.out.println("Join! count: " + count);
                     addToJoinStore(outerRecord, innerRecord, tx);
                 }
 
@@ -95,7 +96,7 @@ public class JoinIterator extends Iterator{
         return StatusCode.SUCCESS;
     }
 
-    // TODO: Predicate checker
+    // Checks whether two records should be joined by using predicated
     public boolean doesRecordMatchPredicate(Record outerRecord, Record innerRecord) {
         // Calculate value of outer record
         Object outerValue = null;
