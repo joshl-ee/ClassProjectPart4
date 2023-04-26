@@ -10,7 +10,6 @@ import com.apple.foundationdb.Transaction;
 
 public class SelectIterator extends Iterator {
 
-    private String tableName;
     private ComparisonPredicate predicate;
     private Iterator.Mode mode;
     private boolean isUsingIndex;
