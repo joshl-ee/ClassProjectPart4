@@ -1,14 +1,9 @@
 package CSCI485ClassProject.iterators;
 
-import CSCI485ClassProject.Cursor;
-import CSCI485ClassProject.IndexesImpl;
-import CSCI485ClassProject.RecordsImpl;
-import CSCI485ClassProject.StatusCode;
+import CSCI485ClassProject.*;
 import CSCI485ClassProject.fdb.FDBHelper;
 import CSCI485ClassProject.fdb.FDBKVPair;
-import CSCI485ClassProject.models.AlgebraicOperator;
-import CSCI485ClassProject.models.AttributeType;
-import CSCI485ClassProject.models.ComparisonPredicate;
+import CSCI485ClassProject.models.*;
 import CSCI485ClassProject.models.Record;
 import CSCI485ClassProject.utils.ComparisonUtils;
 import com.apple.foundationdb.Database;
@@ -17,6 +12,7 @@ import com.apple.foundationdb.directory.DirectorySubspace;
 import com.apple.foundationdb.tuple.Tuple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +48,6 @@ public class JoinIterator extends Iterator{
             System.out.println("Error populating join store");
         }
 
-        // TODO: Create cursor on join store
         if (startFromBeginning() != StatusCode.SUCCESS) {
             System.out.println("Error initializing cursor");
         }
@@ -72,6 +67,27 @@ public class JoinIterator extends Iterator{
     // TODO: Populate join store
     private StatusCode populateJoinStore() {
         Transaction tx = FDBHelper.openTransaction(db);
+
+        // Check for duplicated attribute names and rename them.
+        String outerTableName = outerIterator.getTableName();
+        String innerTableName = innerIterator.getTableName();
+        TableMetadata outerMetadata = getTableMetadataByTableName(tx, outerTableName);
+        TableMetadata innerMetadata = getTableMetadataByTableName(tx, innerTableName);
+        HashMap<String, String> outerNameUpdate = new HashMap<>();
+        HashMap<String, String> innerNameUpdate = new HashMap<>();
+
+        for (String outerName : outerMetadata.getAttributes().keySet()) {
+            for (String innerName: innerMetadata.getAttributes().keySet()) {
+                if (outerName.equals(innerName)) {
+                    // If same, rename attributes
+                    String newOuterAttrName = outerTableName+"."+outerName;
+                    String newInnerAttrName = innerTableName+"."+innerName;
+                    outerNameUpdate.put(outerName, newOuterAttrName);
+                    innerNameUpdate.put(innerName, newInnerAttrName);
+                }
+            }
+        }
+
         // Loop through outer iterator. For each iteration, loop through entire inner iterator. Need to create a copy constructor for this
         Record outerRecord;
         Record innerRecord;
@@ -87,14 +103,23 @@ public class JoinIterator extends Iterator{
                 // TODO: Join Logic. Add to join store if predicate succeeds
                 if (doesRecordMatchPredicate(outerRecord, innerRecord)) {
                     count++;
-                    System.out.println("Join! count: " + count);
-                    addToJoinStore(outerRecord, innerRecord, tx);
+                    if (addToJoinStore(outerRecord, innerRecord, tx, outerNameUpdate, innerNameUpdate) != StatusCode.SUCCESS) {
+                        System.out.println("Failed to add to join records");
+                    }
                 }
 
             }
         }
         FDBHelper.commitTransaction(tx);
         return StatusCode.SUCCESS;
+    }
+
+    private TableMetadata getTableMetadataByTableName(Transaction tx, String tableName) {
+        TableMetadataTransformer tblMetadataTransformer = new TableMetadataTransformer(tableName);
+        List<FDBKVPair> kvPairs = FDBHelper.getAllKeyValuePairsOfSubdirectory(db, tx,
+                tblMetadataTransformer.getTableAttributeStorePath());
+        TableMetadata tblMetadata = tblMetadataTransformer.convertBackToTableMetadata(kvPairs);
+        return tblMetadata;
     }
 
     // Checks whether two records should be joined by using predicated
@@ -148,13 +173,20 @@ public class JoinIterator extends Iterator{
         return false;
     }
 
+    // TODO: Build joined KVPair
     // Add to join store. Called after predicate check succeeds.
-    private StatusCode addToJoinStore(Record outerRecord, Record innerRecord, Transaction tx) {
-        // TODO: Build joined KVPair
-        Transaction addTx = FDBHelper.openTransaction(db);
-//        FDBKVPair kvpair = new FDBKVPair(joinPath, new Tuple().addObject(value), new Tuple());
-//        FDBHelper.setFDBKVPair(subspace, addTx, kvpair);
-        FDBHelper.commitTransaction(addTx);
+    private StatusCode addToJoinStore(Record outerRecord, Record innerRecord, Transaction tx, HashMap<String, String> outerNameUpdate, HashMap<String, String> innerNameUpdate) {
+        Record joinedRecord = new Record();
+
+        // TODO: Add joined record to database
+        for (String attrName : outerRecord.getMapAttrNameToValue().keySet()) {
+            joinedRecord.setAttrNameAndValue(outerNameUpdate.getOrDefault(attrName, attrName), outerRecord.getValueForGivenAttrName(attrName));
+        }
+        for (String attrName : innerRecord.getMapAttrNameToValue().keySet()) {
+            joinedRecord.setAttrNameAndValue(innerNameUpdate.getOrDefault(attrName, attrName), innerRecord.getValueForGivenAttrName(attrName));
+
+        }
+
         return StatusCode.SUCCESS;
     }
 
