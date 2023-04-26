@@ -69,12 +69,12 @@ public class ProjectIterator extends Iterator{
         this.isDuplicateFree = isDuplicateFree;
         this.db = db;
         isUsingIterator = true;
+        this.iterator = iterator;
 
         if (initializeDuplicateStore(attrName) != StatusCode.SUCCESS) {
             System.out.println("Error making duplicate store");
         }
 
-        this.iterator = iterator;
     }
 
     private TableMetadata getTableMetadataByTableName(Transaction tx, String tableName) {
