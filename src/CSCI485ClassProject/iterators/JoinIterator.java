@@ -107,7 +107,7 @@ public class JoinIterator extends Iterator{
         // Calculate value of inner record
         Object innerValue = null;
         if (predicate.getLeftHandSideAttrName() != null) {
-            innerValue = outerRecord.getValueForGivenAttrName(predicate.getRightHandSideAttrName());
+            innerValue = innerRecord.getValueForGivenAttrName(predicate.getRightHandSideAttrName());
         }
         // Get RHS operator if it exists
         boolean rhsOperation = false;
