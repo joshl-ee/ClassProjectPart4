@@ -28,6 +28,8 @@ public class JoinIterator extends Iterator{
     private List<String> joinPath = new ArrayList<>();
     private DirectorySubspace subspace;
     private String joinTableName;
+    private RecordsTransformer transformer;
+
 
     public JoinIterator(Database db, Iterator outerIterator, Iterator innerIterator, ComparisonPredicate predicate, Set<String> attrNames) {
         this.db = db;
@@ -35,7 +37,7 @@ public class JoinIterator extends Iterator{
         this.innerIterator = innerIterator;
         this.predicate = predicate;
         this.attrNames = attrNames;
-
+        transformer = new RecordsTransformer();
         recorder = new RecordsImpl();
         indexer = new IndexesImpl(recorder);
 
@@ -185,6 +187,11 @@ public class JoinIterator extends Iterator{
         for (String attrName : innerRecord.getMapAttrNameToValue().keySet()) {
             joinedRecord.setAttrNameAndValue(innerNameUpdate.getOrDefault(attrName, attrName), innerRecord.getValueForGivenAttrName(attrName));
 
+        }
+
+        List<FDBKVPair> listOfPairs = transformer.convertToFDBKVPairs(joinedRecord);
+        for (FDBKVPair pair : listOfPairs) {
+            FDBHelper.setFDBKVPair(subspace, tx, pair);
         }
 
         return StatusCode.SUCCESS;
