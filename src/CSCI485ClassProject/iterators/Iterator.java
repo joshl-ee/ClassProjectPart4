@@ -1,5 +1,8 @@
 package CSCI485ClassProject.iterators;
 
+import CSCI485ClassProject.Indexes;
+import CSCI485ClassProject.Records;
+import CSCI485ClassProject.StatusCode;
 import CSCI485ClassProject.models.Record;
 
 public abstract class Iterator {
@@ -11,6 +14,8 @@ public abstract class Iterator {
   // Cursor cursor;
 
   protected String tableName;
+  protected Indexes indexer;
+  protected Records recorder;
   public enum Mode {
     READ,
     READ_WRITE
@@ -28,7 +33,7 @@ public abstract class Iterator {
 
   public abstract Record next();
   public abstract boolean hasNext();
-
+  public abstract StatusCode startFromBeginning();
   public abstract void commit();
   public String getTableName() {return this.tableName;}
   public abstract void abort();

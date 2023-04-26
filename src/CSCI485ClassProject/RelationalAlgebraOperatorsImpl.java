@@ -3,6 +3,7 @@ package CSCI485ClassProject;
 import CSCI485ClassProject.fdb.FDBHelper;
 import CSCI485ClassProject.fdb.FDBKVPair;
 import CSCI485ClassProject.iterators.Iterator;
+import CSCI485ClassProject.iterators.JoinIterator;
 import CSCI485ClassProject.iterators.ProjectIterator;
 import CSCI485ClassProject.iterators.SelectIterator;
 import CSCI485ClassProject.models.AssignmentExpression;
@@ -170,13 +171,19 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
       }
     }
 
-    if (p_iterator != null) p_iterator.commit();
+    p_iterator.commit();
     return recordSet;
   }
 
   @Override
   public Iterator join(Iterator outerIterator, Iterator innerIterator, ComparisonPredicate predicate, Set<String> attrNames) {
-    return null;
+    Transaction tx = FDBHelper.openTransaction(db);
+
+    JoinIterator iterator = new JoinIterator(db, outerIterator, innerIterator, predicate, attrNames);
+
+    FDBHelper.commitTransaction(tx);
+
+    return iterator;
   }
 
   @Override

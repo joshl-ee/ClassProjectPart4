@@ -13,10 +13,9 @@ public class SelectIterator extends Iterator {
     private ComparisonPredicate predicate;
     private Iterator.Mode mode;
     private boolean isUsingIndex;
-    private Indexes indexer;
-    private Records recorder;
     private Cursor cursor;
     private Transaction tx;
+    private Cursor.Mode cursorMode;
 
     public SelectIterator(Database db, String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
         tx = FDBHelper.openTransaction(db);
@@ -31,16 +30,15 @@ public class SelectIterator extends Iterator {
         if (isUsingIndex) indexer.createIndex(tableName, predicate.getLeftHandSideAttrName(), IndexType.NON_CLUSTERED_B_PLUS_TREE_INDEX);
 
         // Initialize cursor based on predicate
-        Cursor.Mode cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
+        cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
 //        System.out.println("LeftHandSideAttrName: " + predicate.getLeftHandSideAttrName());
 //        System.out.println("RightHandSideValue: " + predicate.getRightHandSideValue());
 //        System.out.println("Operator: " + predicate.getOperator());
 
-        if (predicate.getPredicateType() == ComparisonPredicate.Type.ONE_ATTR) {
-            cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
-        }
-        else {
-            cursor = recorder.openCursor(tableName, cursorMode);
+        // Create cursor depending on whether there is ONE_ATTR or TWO_ATTR in the predicate.
+        // If there is one, we can just use index structure. Otherwise, checking for predicate is more complicated
+        if (startFromBeginning() != StatusCode.SUCCESS) {
+            System.out.println("Error initializing cursor");
         }
     }
 
@@ -57,12 +55,15 @@ public class SelectIterator extends Iterator {
         return record;
     }
 
+    // Predicate checker for TWO_ATTR
     public boolean doesRecordMatchPredicate(Record record) {
-        // Calculate value of right side
+        // Calculate value of right side of current record
         Object attrValue = record.getValueForGivenAttrName(predicate.getRightHandSideAttrName());
         AlgebraicOperator rhsOperator = predicate.getRightHandSideOperator();
         Object rhsValue = predicate.getRightHandSideValue();
 
+        // Given attribute type, use a specific method to calculate the RHS value using added ComparisonUtil function
+        // Then, use compareTwo methods to return if predicate is matched
         AttributeType recType = record.getTypeForGivenAttrName(predicate.getRightHandSideAttrName());
         Object finalValue;
         if (recType == AttributeType.INT) {
@@ -72,8 +73,8 @@ public class SelectIterator extends Iterator {
             finalValue = ComparisonUtils.calculateDOUBLE(attrValue, rhsOperator, rhsValue);
             return ComparisonUtils.compareTwoDOUBLE(record.getValueForGivenAttrName(predicate.getLeftHandSideAttrName()), finalValue, predicate.getOperator());
         } else if (recType == AttributeType.VARCHAR) {
-            finalValue = ComparisonUtils.calculateVARCHAR(attrValue, rhsOperator, rhsValue);
-            return ComparisonUtils.compareTwoVARCHAR(record.getValueForGivenAttrName(predicate.getLeftHandSideAttrName()), finalValue, predicate.getOperator());
+            System.out.println("This is not possible");
+            return false;
         }
         return false;
     }
@@ -93,6 +94,18 @@ public class SelectIterator extends Iterator {
     public boolean hasNext() {
         if (!cursor.isInitialized()) return true;
         return cursor.hasNext();
+    }
+
+    // Method to start from beginning
+    @Override
+    public StatusCode startFromBeginning() {
+        if (predicate.getPredicateType() == ComparisonPredicate.Type.ONE_ATTR) {
+            cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
+        }
+        else {
+            cursor = recorder.openCursor(tableName, cursorMode);
+        }
+        return StatusCode.SUCCESS;
     }
 
     @Override

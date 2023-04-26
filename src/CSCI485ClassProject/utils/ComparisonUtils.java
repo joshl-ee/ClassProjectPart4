@@ -84,6 +84,7 @@ public class ComparisonUtils {
     }
   }
 
+  // Calculate method for int
   public static long calculateINT(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
     long val1;
     if (attrValue instanceof Integer) {
@@ -114,11 +115,23 @@ public class ComparisonUtils {
     return -1;
   }
 
+  // Calculate method for DOUBLE. NOT TESTED
   public static double calculateDOUBLE(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
-    return 0;
-  }
+    double val1 = (double) attrValue;
+    double val2 = (double) rhsValue;
 
-  public static String calculateVARCHAR(Object attrValue, AlgebraicOperator operator, Object rhsValue) {
-    return "emoty";
+    if (operator == AlgebraicOperator.PRODUCT) {
+      return val1 * val2;
+    }
+    else if (operator == AlgebraicOperator.DIVISION) {
+      return val1/val2;
+    }
+    else if (operator == AlgebraicOperator.MINUS) {
+      return val1-val2;
+    }
+    else if (operator == AlgebraicOperator.PLUS) {
+      return val1+val2;
+    }
+    return -1;
   }
 }
