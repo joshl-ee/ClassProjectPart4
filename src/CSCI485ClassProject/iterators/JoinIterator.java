@@ -70,6 +70,7 @@ public class JoinIterator extends Iterator{
 
     // TODO: Populate join store
     private StatusCode populateJoinStore() {
+        Transaction tx = FDBHelper.openTransaction(db);
         // Loop through outer iterator. For each iteration, loop through entire inner iterator. Need to create a copy constructor for this
         Record outerRecord;
         Record innerRecord;
@@ -85,12 +86,12 @@ public class JoinIterator extends Iterator{
 //                System.out.println("Count: " + count);
                 // TODO: Join Logic. Add to join store if predicate succeeds
                 if (doesRecordMatchPredicate(outerRecord, innerRecord)) {
-                    addToJoinStore(outerRecord, innerRecord);
+                    addToJoinStore(outerRecord, innerRecord, tx);
                 }
 
             }
         }
-
+        FDBHelper.commitTransaction(tx);
         return StatusCode.SUCCESS;
     }
 
@@ -146,7 +147,7 @@ public class JoinIterator extends Iterator{
     }
 
     // Add to join store. Called after predicate check succeeds.
-    private StatusCode addToJoinStore(Record outerRecord, Record innerRecord) {
+    private StatusCode addToJoinStore(Record outerRecord, Record innerRecord, Transaction tx) {
         // TODO: Build joined KVPair
         Transaction addTx = FDBHelper.openTransaction(db);
 //        FDBKVPair kvpair = new FDBKVPair(joinPath, new Tuple().addObject(value), new Tuple());
@@ -157,12 +158,18 @@ public class JoinIterator extends Iterator{
 
     @Override
     public Record next() {
-        return null;
+        // Check if cursor is initialized
+        Record record;
+        if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
+        else record = recorder.getNext(cursor);
+
+        return record;
     }
 
     @Override
     public boolean hasNext() {
-        return false;
+        if (!cursor.isInitialized()) return true;
+        return cursor.hasNext();
     }
 
     @Override
@@ -174,14 +181,16 @@ public class JoinIterator extends Iterator{
     @Override
     public void commit() {
         // Delete Join Store
-
-        // Abort tx
+        Transaction tx = FDBHelper.openTransaction(db);
+        FDBHelper.dropSubspace(tx, joinPath);
+        FDBHelper.commitTransaction(tx);
     }
 
     @Override
     public void abort() {
         // Delete Join Store
-
-        // Abort tx
+        Transaction tx = FDBHelper.openTransaction(db);
+        FDBHelper.dropSubspace(tx, joinPath);
+        FDBHelper.commitTransaction(tx);
     }
 }
