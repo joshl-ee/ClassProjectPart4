@@ -212,7 +212,9 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
     }
 
 
-    return recorder.insertRecord(tableName, primaryKeys, primaryKeyValues.toArray(), attrNames.toArray(new String[attrNames.size()]), attrValues.toArray());
+    StatusCode code = recorder.insertRecord(tableName, primaryKeys, primaryKeyValues.toArray(), attrNames.toArray(new String[attrNames.size()]), attrValues.toArray());
+    recorder.closeDatabase();
+    return code;
 
   }
 
