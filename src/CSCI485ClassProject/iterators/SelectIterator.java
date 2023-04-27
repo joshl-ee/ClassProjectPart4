@@ -52,6 +52,7 @@ public class SelectIterator extends Iterator {
 //            System.out.println("Skip!: " + skip);
             record = recorder.getNext(cursor);
         }
+        currRecord = record;
         return record;
     }
 

@@ -11,25 +11,21 @@ import com.apple.foundationdb.Transaction;
 import com.apple.foundationdb.directory.DirectorySubspace;
 import com.apple.foundationdb.tuple.Tuple;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JoinIterator extends Iterator{
 
-
     private Iterator outerIterator;
     private Iterator innerIterator;
-    private Cursor cursor;
     private ComparisonPredicate predicate;
-    private Set<String> attrNames;
+    private Set<String> attrNames = null;
     private Database db;
-    private List<String> joinPath = new ArrayList<>();
-    private DirectorySubspace subspace;
-    private String joinTableName;
-    private RecordsTransformer transformer;
-
+    private Record currOuterRecord;
+    private Record currInnerRecord;
+    private Transaction tx;
+    private HashMap<String, String> outerNameUpdate = new HashMap<>();
+    private HashMap<String, String> innerNameUpdate = new HashMap<>();
+    private boolean attrSetProvided = false;
 
     public JoinIterator(Database db, Iterator outerIterator, Iterator innerIterator, ComparisonPredicate predicate, Set<String> attrNames) {
         this.db = db;
@@ -37,46 +33,17 @@ public class JoinIterator extends Iterator{
         this.innerIterator = innerIterator;
         this.predicate = predicate;
         this.attrNames = attrNames;
-        transformer = new RecordsTransformer();
+        if (attrNames.size() > 0) attrSetProvided = true;
+
         recorder = new RecordsImpl();
         indexer = new IndexesImpl(recorder);
-
-        // Initialize join store
-        if (initializeJoinStore() != StatusCode.SUCCESS) {
-            System.out.println("Error creating join store");
-        }
-        // Populate join store
-        else if (populateJoinStore() != StatusCode.SUCCESS) {
-            System.out.println("Error populating join store");
-        }
-
-        if (startFromBeginning() != StatusCode.SUCCESS) {
-            System.out.println("Error initializing cursor");
-        }
-    }
-
-    private StatusCode initializeJoinStore() {
-        Transaction storeTx = FDBHelper.openTransaction(db);
-        joinTableName = outerIterator.getTableName()+innerIterator.getTableName()+"Join";
-        joinPath.add(joinTableName);
-        joinPath.add("records");
-        subspace = FDBHelper.createOrOpenSubspace(storeTx, joinPath);
-        FDBHelper.commitTransaction(storeTx);
-        return StatusCode.SUCCESS;
-    }
-
-
-    // TODO: Populate join store
-    private StatusCode populateJoinStore() {
-        Transaction tx = FDBHelper.openTransaction(db);
+        this.tx = FDBHelper.openTransaction(db);
 
         // Check for duplicated attribute names and rename them.
         String outerTableName = outerIterator.getTableName();
         String innerTableName = innerIterator.getTableName();
         TableMetadata outerMetadata = getTableMetadataByTableName(tx, outerTableName);
         TableMetadata innerMetadata = getTableMetadataByTableName(tx, innerTableName);
-        HashMap<String, String> outerNameUpdate = new HashMap<>();
-        HashMap<String, String> innerNameUpdate = new HashMap<>();
 
         for (String outerName : outerMetadata.getAttributes().keySet()) {
             for (String innerName: innerMetadata.getAttributes().keySet()) {
@@ -90,30 +57,9 @@ public class JoinIterator extends Iterator{
             }
         }
 
-        // Loop through outer iterator. For each iteration, loop through entire inner iterator. Need to create a copy constructor for this
-        Record outerRecord;
-        Record innerRecord;
-        // Debug log:
-        int count = 0;
-        while (outerIterator.hasNext()) {
-            outerRecord = outerIterator.next();
-            // Reset inner operator during each iteration of outer table
-            innerIterator.startFromBeginning();
-            while (innerIterator.hasNext()) {
-                innerRecord = innerIterator.next();
-//                System.out.println("Count: " + count);
-                // TODO: Join Logic. Add to join store if predicate succeeds
-                if (doesRecordMatchPredicate(outerRecord, innerRecord)) {
-                    count++;
-                    if (addToJoinStore(outerRecord, innerRecord, tx, outerNameUpdate, innerNameUpdate) != StatusCode.SUCCESS) {
-                        System.out.println("Failed to add to join records");
-                    }
-                }
-
-            }
+        if (startFromBeginning() != StatusCode.SUCCESS) {
+            System.out.println("Error initializing cursor");
         }
-        FDBHelper.commitTransaction(tx);
-        return StatusCode.SUCCESS;
     }
 
     private TableMetadata getTableMetadataByTableName(Transaction tx, String tableName) {
@@ -175,12 +121,10 @@ public class JoinIterator extends Iterator{
         return false;
     }
 
-    // TODO: Build joined KVPair
-    // Add to join store. Called after predicate check succeeds.
-    private StatusCode addToJoinStore(Record outerRecord, Record innerRecord, Transaction tx, HashMap<String, String> outerNameUpdate, HashMap<String, String> innerNameUpdate) {
+    // Build the joined record once a match is found
+    private Record buildJoinedRecord(Record outerRecord, Record innerRecord) {
         Record joinedRecord = new Record();
 
-        // TODO: Add joined record to database
         for (String attrName : outerRecord.getMapAttrNameToValue().keySet()) {
             joinedRecord.setAttrNameAndValue(outerNameUpdate.getOrDefault(attrName, attrName), outerRecord.getValueForGivenAttrName(attrName));
         }
@@ -189,33 +133,47 @@ public class JoinIterator extends Iterator{
 
         }
 
-        List<FDBKVPair> listOfPairs = transformer.convertToFDBKVPairs(joinedRecord);
-        for (FDBKVPair pair : listOfPairs) {
-            FDBHelper.setFDBKVPair(subspace, tx, pair);
-        }
-
-        return StatusCode.SUCCESS;
+        return joinedRecord;
     }
 
     @Override
     public Record next() {
-        // Check if cursor is initialized
-        Record record;
-        if (!recorder.isInitialized(cursor)) record = recorder.getFirst(cursor);
-        else record = recorder.getNext(cursor);
+        Boolean found = false;
 
-        return record;
+        // TODO: Find next two records to join
+        while (!found) {
+            if (innerIterator.hasNext()) {
+                currInnerRecord = innerIterator.next();
+                if (doesRecordMatchPredicate(currOuterRecord, currInnerRecord)) {
+                    found = true;
+                }
+            }
+            else if (outerIterator.hasNext()){
+                innerIterator.startFromBeginning();
+                currOuterRecord = outerIterator.next();
+                if (doesRecordMatchPredicate(currOuterRecord, currInnerRecord)) {
+                    found = true;
+                }
+            }
+            else {
+                return null;
+            }
+        }
+
+        // If found: create joined record
+        return buildJoinedRecord(currOuterRecord, currInnerRecord);
     }
 
     @Override
     public boolean hasNext() {
-        if (!cursor.isInitialized()) return true;
-        return cursor.hasNext();
+        return outerIterator.hasNext() || innerIterator.hasNext();
     }
 
     @Override
     public StatusCode startFromBeginning() {
-        cursor = recorder.openCursor(joinTableName, Cursor.Mode.READ);
+        outerIterator.startFromBeginning();
+        innerIterator.startFromBeginning();
+
         return StatusCode.SUCCESS;
     }
 
@@ -223,7 +181,6 @@ public class JoinIterator extends Iterator{
     public void commit() {
         // Delete Join Store
         Transaction tx = FDBHelper.openTransaction(db);
-        FDBHelper.dropSubspace(tx, joinPath);
         FDBHelper.commitTransaction(tx);
     }
 
@@ -231,7 +188,6 @@ public class JoinIterator extends Iterator{
     public void abort() {
         // Delete Join Store
         Transaction tx = FDBHelper.openTransaction(db);
-        FDBHelper.dropSubspace(tx, joinPath);
         FDBHelper.commitTransaction(tx);
     }
 }

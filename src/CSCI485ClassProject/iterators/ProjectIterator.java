@@ -138,6 +138,7 @@ public class ProjectIterator extends Iterator{
             }
         }
 
+        currRecord = record;
         return record;
     }
 
