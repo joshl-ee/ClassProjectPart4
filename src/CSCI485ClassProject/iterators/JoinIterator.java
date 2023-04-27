@@ -49,7 +49,7 @@ public class JoinIterator extends Iterator{
             for (String innerName: innerMetadata.getAttributes().keySet()) {
                 if (outerName.equals(innerName)) {
                     // If same, rename attributes
-                    String newOuterAttrName = outerTableName+".poo"+outerName;
+                    String newOuterAttrName = outerTableName+"."+outerName;
                     String newInnerAttrName = innerTableName+"."+innerName;
                     outerNameUpdate.put(outerName, newOuterAttrName);
                     innerNameUpdate.put(innerName, newInnerAttrName);
@@ -141,7 +141,7 @@ public class JoinIterator extends Iterator{
 
     @Override
     public Record next() {
-        Boolean found = false;
+        boolean found = false;
 
         // TODO: Find next two records to join
         while (!found) {
@@ -183,14 +183,16 @@ public class JoinIterator extends Iterator{
     @Override
     public void commit() {
         // Delete Join Store
-        Transaction tx = FDBHelper.openTransaction(db);
+        outerIterator.commit();
+        innerIterator.commit();
         FDBHelper.commitTransaction(tx);
     }
 
     @Override
     public void abort() {
         // Delete Join Store
-        Transaction tx = FDBHelper.openTransaction(db);
+        outerIterator.abort();
+        innerIterator.abort();
         FDBHelper.commitTransaction(tx);
     }
 }
