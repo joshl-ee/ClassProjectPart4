@@ -31,7 +31,7 @@ public abstract class Iterator {
   public void setMode(Mode mode) {
     this.mode = mode;
   };
-  public void getCurrent() { return this.currRecord; }
+  public Record getCurrent() { return this.currRecord; }
   public abstract Record next();
   public abstract boolean hasNext();
   public abstract StatusCode startFromBeginning();
