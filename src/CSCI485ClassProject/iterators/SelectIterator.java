@@ -105,6 +105,7 @@ public class SelectIterator extends Iterator {
     public StatusCode startFromBeginning() {
         FDBHelper.commitTransaction(tx);
         tx = FDBHelper.openTransaction(db);
+        recorder.commitCursor(cursor);
         if (predicate.getPredicateType() == ComparisonPredicate.Type.ONE_ATTR) {
             cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
         }
