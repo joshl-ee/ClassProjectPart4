@@ -72,6 +72,8 @@ public class JoinIterator extends Iterator{
 
     // Checks whether two records should be joined by using predicated
     public boolean doesRecordMatchPredicate(Record outerRecord, Record innerRecord) {
+        if (outerRecord == null || innerRecord == null) return false;
+
         // Calculate value of outer record
         Object outerValue = null;
         if (predicate.getLeftHandSideAttrName() != null) {
