@@ -127,11 +127,13 @@ public class JoinIterator extends Iterator{
         Record joinedRecord = new Record();
 
         for (String attrName : outerRecord.getMapAttrNameToValue().keySet()) {
+            // Check whether attrName is to be projected
             if (!(attrSetProvided && attrNames.contains(attrName))) {
                 joinedRecord.setAttrNameAndValue(outerNameUpdate.getOrDefault(attrName, attrName), outerRecord.getValueForGivenAttrName(attrName));
             }
         }
         for (String attrName : innerRecord.getMapAttrNameToValue().keySet()) {
+            // Check whether attrName is to be projected
             if (!(attrSetProvided && attrNames.contains(attrName))) {
                 joinedRecord.setAttrNameAndValue(innerNameUpdate.getOrDefault(attrName, attrName), innerRecord.getValueForGivenAttrName(attrName));
             }

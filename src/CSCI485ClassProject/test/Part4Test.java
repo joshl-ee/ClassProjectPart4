@@ -350,27 +350,27 @@ public class Part4Test {
     System.out.println("Test3 passed!");
   }
 
-//  @Test
-//  public void unitTest4() {
-//    // insert new records in the department table
-//    for (int i = initialNumberOfRecords; i < initialNumberOfRecords + updatedNumberOfRecords; i++) {
-//      Record record = getExpectedDepartmentRecord(i);
-//      assertEquals(StatusCode.SUCCESS, relAlgOperators.insert(DepartmentTableName, record, DepartmentTablePKAttributes));
-//    }
-//
-//    Iterator departmentIterator = relAlgOperators.select(DepartmentTableName, new ComparisonPredicate(), Iterator.Mode.READ, false);
-//    assertNotNull(departmentIterator);
-//
-//    for (int i = 0; i < initialNumberOfRecords + updatedNumberOfRecords; i++) {
-//      Record record = departmentIterator.next();
-//      Record expectedRecord = getExpectedDepartmentRecord(i);
-//      assertEquals(expectedRecord, record);
-//    }
-//
-//    assertNull(departmentIterator.next());
-//    System.out.println("Test4 passed!");
-//  }
-//
+  @Test
+  public void unitTest4() {
+    // insert new records in the department table
+    for (int i = initialNumberOfRecords; i < initialNumberOfRecords + updatedNumberOfRecords; i++) {
+      Record record = getExpectedDepartmentRecord(i);
+      assertEquals(StatusCode.SUCCESS, relAlgOperators.insert(DepartmentTableName, record, DepartmentTablePKAttributes));
+    }
+
+    Iterator departmentIterator = relAlgOperators.select(DepartmentTableName, new ComparisonPredicate(), Iterator.Mode.READ, false);
+    assertNotNull(departmentIterator);
+
+    for (int i = 0; i < initialNumberOfRecords + updatedNumberOfRecords; i++) {
+      Record record = departmentIterator.next();
+      Record expectedRecord = getExpectedDepartmentRecord(i);
+      assertEquals(expectedRecord, record);
+    }
+
+    assertNull(departmentIterator.next());
+    System.out.println("Test4 passed!");
+  }
+
 //  @Test
 //  public void unitTest5() {
 //    AssignmentExpression salaryUpdateExpression =

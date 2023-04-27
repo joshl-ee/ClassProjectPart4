@@ -189,6 +189,30 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   @Override
   public StatusCode insert(String tableName, Record record, String[] primaryKeys) {
+
+    Records recorder = new RecordsImpl();
+
+    List<Object> primaryKeyValues = new ArrayList<>();
+    List<String> attrNames = new ArrayList<>();
+    List<Object> attrValues = new ArrayList<>();
+
+    for (String attrName : record.getMapAttrNameToValue().keySet()) {
+      boolean primaryKey = false;
+      for (int i = 0; i < primaryKeys.length; i++) {
+        if (attrName.equals(primaryKeys[i])) {
+          primaryKeyValues.add(record.getValueForGivenAttrName(attrName));
+          primaryKey = true;
+          break;
+        }
+      }
+      if (!primaryKey) {
+        attrNames.add(attrName);
+        attrValues.add(record.getValueForGivenAttrName(attrName));
+      }
+    }
+
+    recorder.insertRecord(tableName, primaryKeys, primaryKeyValues.toArray(), attrNames.toArray(new String[attrNames.size()]), attrValues.toArray());
+
     return null;
   }
 
