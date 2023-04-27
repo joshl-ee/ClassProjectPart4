@@ -49,7 +49,7 @@ public class JoinIterator extends Iterator{
             for (String innerName: innerMetadata.getAttributes().keySet()) {
                 if (outerName.equals(innerName)) {
                     // If same, rename attributes
-                    String newOuterAttrName = outerTableName+"."+outerName;
+                    String newOuterAttrName = outerTableName+".poo"+outerName;
                     String newInnerAttrName = innerTableName+"."+innerName;
                     outerNameUpdate.put(outerName, newOuterAttrName);
                     innerNameUpdate.put(innerName, newInnerAttrName);
@@ -120,6 +120,7 @@ public class JoinIterator extends Iterator{
             System.out.println("This is not possible");
             return false;
         }
+
         return false;
     }
 
