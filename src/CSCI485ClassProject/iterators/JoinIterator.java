@@ -188,7 +188,6 @@ public class JoinIterator extends Iterator{
         outerIterator.commit();
         innerIterator.commit();
         FDBHelper.commitTransaction(tx);
-        FDBHelper.close(db);
 
     }
 
@@ -198,7 +197,6 @@ public class JoinIterator extends Iterator{
         outerIterator.abort();
         innerIterator.abort();
         FDBHelper.commitTransaction(tx);
-        FDBHelper.close(db);
 
     }
 }

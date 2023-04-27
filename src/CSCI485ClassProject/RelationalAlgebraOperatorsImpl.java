@@ -179,11 +179,7 @@ public class RelationalAlgebraOperatorsImpl implements RelationalAlgebraOperator
 
   @Override
   public Iterator join(Iterator outerIterator, Iterator innerIterator, ComparisonPredicate predicate, Set<String> attrNames) {
-    Transaction tx = FDBHelper.openTransaction(db);
-
     JoinIterator iterator = new JoinIterator(db, outerIterator, innerIterator, predicate, attrNames);
-
-    FDBHelper.commitTransaction(tx);
 
     return iterator;
   }

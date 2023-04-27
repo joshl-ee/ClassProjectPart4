@@ -95,7 +95,6 @@ public class SelectIterator extends Iterator {
         // Drop index
         indexer.closeDatabase();
         recorder.closeDatabase();
-        FDBHelper.close(db);
 
     }
 
@@ -134,7 +133,6 @@ public class SelectIterator extends Iterator {
         // Drop index
         indexer.closeDatabase();
         recorder.closeDatabase();
-        FDBHelper.close(db);
 
     }
 }
