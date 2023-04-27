@@ -131,6 +131,7 @@ public class Part4Test {
     indexes.closeDatabase();
     relAlgOperators.closeDatabase();
   }
+
   private Record getExpectedDepartmentRecord(long dno) {
     Record rec = new Record();
     String name = getDepartmentName(dno);
@@ -192,7 +193,6 @@ public class Part4Test {
 
     Random randGenerator = new Random(randSeed);
     Set<Record> expectSet = new HashSet<>();
-    int numberOfJosh = 0;
     for (int i = 0; i < initialNumberOfRecords; i++) {
       long ssn = i;
       long dno = getDno(randGenerator, dnoLB, dnoUB);
@@ -204,7 +204,6 @@ public class Part4Test {
 
       if (salary < age * 2) {
         expectSet.add(getExpectedEmployeeRecord(ssn, dno));
-        numberOfJosh++;
       }
       Object[] primaryKeyVal = new Object[] {ssn};
       Object[] nonPrimaryKeyVal = new Object[] {dno, name, email, age, address, salary};
