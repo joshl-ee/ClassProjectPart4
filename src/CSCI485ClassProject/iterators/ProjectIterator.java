@@ -212,6 +212,8 @@ public class ProjectIterator extends Iterator{
             FDBHelper.dropSubspace(tx, duplicatePath);
         }
         // Delete index structure
+        recorder.commitCursor(cursor);
+
         indexer.dropIndex(tableName, attrName);
         indexer.closeDatabase();
         recorder.closeDatabase();
@@ -225,6 +227,8 @@ public class ProjectIterator extends Iterator{
         if (isDuplicateFree) {
             FDBHelper.dropSubspace(tx, duplicatePath);
         }
+        recorder.abortCursor(cursor);
+
         // Delete index structure
         indexer.dropIndex(tableName, attrName);
         indexer.closeDatabase();

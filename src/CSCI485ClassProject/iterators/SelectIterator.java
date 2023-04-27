@@ -34,6 +34,7 @@ public class SelectIterator extends Iterator {
 
         // Initialize cursor based on predicate
         cursorMode = mode == Iterator.Mode.READ ? Cursor.Mode.READ : Cursor.Mode.READ_WRITE;
+
 //        System.out.println("LeftHandSideAttrName: " + predicate.getLeftHandSideAttrName());
 //        System.out.println("RightHandSideValue: " + predicate.getRightHandSideValue());
 //        System.out.println("Operator: " + predicate.getOperator());
@@ -85,11 +86,13 @@ public class SelectIterator extends Iterator {
 
     @Override
     public void commit() {
+        if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
+
         // Save changes
         FDBHelper.commitTransaction(tx);
+        recorder.commitCursor(cursor);
 
         // Drop index
-        if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
         indexer.closeDatabase();
         recorder.closeDatabase();
     }
@@ -104,8 +107,11 @@ public class SelectIterator extends Iterator {
     @Override
     public StatusCode startFromBeginning() {
         FDBHelper.commitTransaction(tx);
+
         tx = FDBHelper.openTransaction(db);
+
         recorder.commitCursor(cursor);
+
         if (predicate.getPredicateType() == ComparisonPredicate.Type.ONE_ATTR) {
             cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
         }
@@ -118,10 +124,12 @@ public class SelectIterator extends Iterator {
     @Override
     public void abort() {
         // Abort changes
+        if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
+
         FDBHelper.abortTransaction(tx);
+        recorder.abortCursor(cursor);
 
         // Drop index
-        if (isUsingIndex) indexer.dropIndex(tableName, predicate.getLeftHandSideAttrName());
         indexer.closeDatabase();
         recorder.closeDatabase();
     }
