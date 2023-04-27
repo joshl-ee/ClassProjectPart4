@@ -33,7 +33,7 @@ public class JoinIterator extends Iterator{
         this.innerIterator = innerIterator;
         this.predicate = predicate;
         this.attrNames = attrNames;
-        if (attrNames.size() > 0) attrSetProvided = true;
+        if (attrNames != null && attrNames.size() > 0) attrSetProvided = true;
 
         recorder = new RecordsImpl();
         indexer = new IndexesImpl(recorder);
