@@ -160,6 +160,8 @@ public class ProjectIterator extends Iterator{
         FDBHelper.commitTransaction(tx);
         tx = FDBHelper.openTransaction(db);
 
+        recorder.commitCursor(cursor);
+
         TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
         AttributeType attrType = metadata.getAttributes().get(attrName);
         if (!simpleOrNo) {
