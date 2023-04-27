@@ -8,8 +8,6 @@ import CSCI485ClassProject.models.Record;
 import CSCI485ClassProject.utils.ComparisonUtils;
 import com.apple.foundationdb.Database;
 import com.apple.foundationdb.Transaction;
-import com.apple.foundationdb.directory.DirectorySubspace;
-import com.apple.foundationdb.tuple.Tuple;
 
 import java.util.*;
 
@@ -129,11 +127,14 @@ public class JoinIterator extends Iterator{
         Record joinedRecord = new Record();
 
         for (String attrName : outerRecord.getMapAttrNameToValue().keySet()) {
-            joinedRecord.setAttrNameAndValue(outerNameUpdate.getOrDefault(attrName, attrName), outerRecord.getValueForGivenAttrName(attrName));
+            if (attrSetProvided && attrNames.contains(attrName)) {
+                joinedRecord.setAttrNameAndValue(outerNameUpdate.getOrDefault(attrName, attrName), outerRecord.getValueForGivenAttrName(attrName));
+            }
         }
         for (String attrName : innerRecord.getMapAttrNameToValue().keySet()) {
-            joinedRecord.setAttrNameAndValue(innerNameUpdate.getOrDefault(attrName, attrName), innerRecord.getValueForGivenAttrName(attrName));
-
+            if (attrSetProvided && attrNames.contains(attrName)) {
+                joinedRecord.setAttrNameAndValue(innerNameUpdate.getOrDefault(attrName, attrName), innerRecord.getValueForGivenAttrName(attrName));
+            }
         }
 
         return joinedRecord;
@@ -143,7 +144,6 @@ public class JoinIterator extends Iterator{
     public Record next() {
         boolean found = false;
 
-        // TODO: Find next two records to join
         while (!found) {
             if (innerIterator.hasNext()) {
                 currInnerRecord = innerIterator.next();
