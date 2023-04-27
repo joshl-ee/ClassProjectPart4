@@ -217,8 +217,10 @@ public class ProjectIterator extends Iterator{
         indexer.dropIndex(tableName, attrName);
         indexer.closeDatabase();
         recorder.closeDatabase();
+
         // Commit tx
         FDBHelper.commitTransaction(tx);
+        FDBHelper.close(db);
     }
 
     @Override
@@ -235,5 +237,7 @@ public class ProjectIterator extends Iterator{
         recorder.closeDatabase();
         // Abort tx
         FDBHelper.abortTransaction(tx);
+        FDBHelper.close(db);
+
     }
 }
