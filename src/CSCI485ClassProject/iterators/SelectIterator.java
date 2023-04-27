@@ -16,12 +16,15 @@ public class SelectIterator extends Iterator {
     private Cursor cursor;
     private Transaction tx;
     private Cursor.Mode cursorMode;
+    private Database db;
 
     public SelectIterator(Database db, String tableName, ComparisonPredicate predicate, Iterator.Mode mode, boolean isUsingIndex) {
         tx = FDBHelper.openTransaction(db);
         this.tableName = tableName;
         this.predicate = predicate;
         this.isUsingIndex = isUsingIndex;
+        this.db = db;
+
         //this.mode = mode;
         recorder = new RecordsImpl();
         indexer = new IndexesImpl(recorder);
@@ -100,6 +103,8 @@ public class SelectIterator extends Iterator {
     // Method to start from beginning
     @Override
     public StatusCode startFromBeginning() {
+        FDBHelper.commitTransaction(tx);
+        tx = FDBHelper.openTransaction(db);
         if (predicate.getPredicateType() == ComparisonPredicate.Type.ONE_ATTR) {
             cursor = recorder.openCursor(tableName, predicate.getLeftHandSideAttrName(), predicate.getRightHandSideValue(), predicate.getOperator(), cursorMode, isUsingIndex);
         }

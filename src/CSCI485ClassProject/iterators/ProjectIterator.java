@@ -157,6 +157,9 @@ public class ProjectIterator extends Iterator{
     // Method to reset iterator back to beginning
     @Override
     public StatusCode startFromBeginning() {
+        FDBHelper.commitTransaction(tx);
+        tx = FDBHelper.openTransaction(db);
+
         TableMetadata metadata = getTableMetadataByTableName(tx, tableName);
         AttributeType attrType = metadata.getAttributes().get(attrName);
         if (!simpleOrNo) {
